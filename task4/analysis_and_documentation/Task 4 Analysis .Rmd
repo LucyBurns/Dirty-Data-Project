@@ -1,0 +1,101 @@
+---
+title: "Task 4 - Hallowe'en Candy Data"
+output:
+  html_document: 
+    number_sections: yes
+    toc: yes
+    df_print: paged
+    toc_float: yes
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+```{r}
+library (tidyverse)
+library (readxl)
+library (janitor)
+```
+
+# Question One
+
+What is the total number of candy ratings given across the three years. (number
+of candy ratings, not number of raters. Don't count missing values)
+
+```{r}
+# For each year how many candy bars were rated in total
+# Do not include missing values
+candy_pivot <- combined %>%
+  pivot_longer(cols = "100_grand_bar":"peanut_butter_jars",
+            names_to = "code",
+            values_to = "rating",
+            values_drop_na = TRUE
+            )
+```
+
+```{r}
+rating_count <- candy_pivot %>%
+  group_by(year, rating) %>% 
+  summarise(
+    n = n()
+  )  
+```
+
+## Answer:
+
+I realised I had gone into too much detail and found out the number of ratings
+by year and by response.
+
+| Despair |  Joy   |  Meh  |   Total    |
+|:-------:|:------:|:-----:|:----------:|
+| 270661  | 197849 |   0   |   468510   |
+|  39001  | 41889  | 37400 |   118290   |
+|  58254  | 64206  | 53095 |   175555   |
+| 367916  | 303944 | 90495 | **762355** |
+
+: Number of ratings by year and response
+
+In answer to the original question there were 762,355 responses (not including
+the NAs).
+
+# Question Two
+
+What was the average age of people who are going out trick or treating and the
+average age of people not going trick or treating?
+
+```{r}
+combined %>%
+  group_by(going_out) %>%
+  summarise(average_age = mean(age)) %>% 
+  arrange(desc(average_age))
+```
+
+
+
+
+# Question Three
+
+For each of joy, despair and meh, which candy bar received the most of these
+ratings?
+
+# Question Four
+
+How many people rated Starburst as despair?
+
+# Question Five
+
+For the next three questions, count despair as -1, joy as +1 and meh as 0.
+
+# Question Six
+
+What was the most popular candy bar by this rating system for each gender in the
+dataset?
+
+# Question Seven
+
+What was the most popular candy bar in each year?
+
+# Question Eight
+
+What was the most popular candy bar by this rating for people in US, Canada, UK
+and all other countries?

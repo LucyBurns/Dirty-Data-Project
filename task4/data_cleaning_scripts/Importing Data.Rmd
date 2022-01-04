@@ -95,6 +95,17 @@ combined <- bind_rows(candy_2017, candy_2016, candy_2015)
 ```
 
 ```{r}
+# Clean the age column
+# Change the data type to integer
+combined$age <- as.integer(combined$age)
+
+combined <- combined %>% 
+  mutate(age = ifelse(age <= 100, age, NA_integer_))
+```
+
+
+```{r}
+# Create a table of country codes - to test cleaning on
 country_codes <- combined %>% 
   group_by(country) %>% 
   summarise(
@@ -103,52 +114,56 @@ country_codes <- combined %>%
 ```
 
 ```{r}
-amended_country_codes<- country_codes %>% 
-  mutate(
-    country = if_else(country == 
-              ("usa","The United States") "USA", country)
-    
+# Change the country code to lower case
+country_codes<- country_codes %>%
+  mutate(country = str_to_lower(country)) 
+```
+
+```{r}
+# Create USA pattern
+usa_pattern <- c("usausausa|usas|usaa|usa? hard to tell anymore..|usa!!!!!!|usa! usa!|usa!|usa usa usa!!!!|usa usa usa usa|usausausa|usas|usaa|usa? hard to tell anymore..|usa!!!!!!|usa! usa!|usa!|usa usa usa!!!!|usa usa usa usa|usa usa usa|usa|usa|units states|united ststes|united      ststes|usa|us|usa|united states of america|us|united states|united states|u.s.a.|united states of america|america|america|u.s.|murica|unites states|us of a|united state|usa! usa! usa!|merica|the united states|united sates|united stated|ussa|ahem....amerca|n. america|the best one - usa|the united states of america|	the yoo ess of aaayyyyyy|u s|u s a|u.s.|u.s.a.|unied states|unhinged states|unied states|unite states|united  states of america|united staes|united statea|united states|united states|united statss|united stetes|	united ststes|united ststes|units states|usa|usa usa usa|usa usa usa usa|usa usa usa!!!!|usa!|usa! usa!|usa!!!!!!|usa? hard to tell anymore..|usaa|usas|usausausa|trumpistan|alaska|i pretend to be from canada, but i am really from the usa.|	
+fear and loathing|united ststes|usa of a|usa of usa|usa usa|usaa|usaa|usaa? hard to tell anymore..|	
+usaa.|usaa.|usad|usasa|new york|new jersey|murrika|the yoo ess of aaayyyyyy")
+```
+
+```{r}
+uk_pattern <- c("endland|england|united kindom|united kingdom|uk|u.k.|scotland")
+```
+
+```{r}
+# Change the codes in the test country_code table
+country_codes <- country_codes %>% 
+  mutate(country2 = case_when(
+    str_detect(country, "not[\\s]{1,}") ~ NA_character_,
+    str_detect(country, "australia") ~ "oz",
+    str_detect(country, "soviet canuckistan") ~ "other",   
+    str_detect(country, "austria") ~ "other",
+    str_detect(country, str_c(usa_pattern, collapse = "|")) ~ "usa",
+    str_detect(country, str_c(uk_pattern, collapse = "|")) ~ "uk",
+    str_detect(country, "^can") ~ "canada",
+    is.na(country) == TRUE ~ NA_character_,
+    TRUE ~ "other")
   )
 ```
 
 ```{r}
-amended_country_codes %>% 
-  group_by(country) %>% 
-  summarise(
-    n = n()
+# In the combined table 
+#     change the country code to lower case
+#     using the patterns replace the uk and usa fields
+
+combined<- combined %>%
+  mutate(country = str_to_lower(country)) 
+
+combined <- combined %>% 
+  mutate(country = case_when(
+    str_detect(country, "not[\\s]{1,}") ~ NA_character_,
+    str_detect(country, "australia") ~ "oz",
+    str_detect(country, "soviet canuckistan") ~ "other",   
+    str_detect(country, "austria") ~ "other",
+    str_detect(country, str_c(usa_pattern, collapse = "|")) ~ "usa",
+    str_detect(country, str_c(uk_pattern, collapse = "|")) ~ "uk",
+    str_detect(country, "^can") ~ "canada",
+    is.na(country) == TRUE ~ NA_character_,
+    TRUE ~ "other")
   )
 ```
-
-```{r}
-pattern <- "[(i?)united] [(i?)st]"
-
-new_country <- country_codes$country %>%
-  str_replace_all(pattern, "USA")
-
-new_country
-```
-
-```{r}
-candyData['Q4: COUNTRY']=candyData['Q4: COUNTRY'].str.lower()
-usa={'usa', 'murica', 'us', 'united states','america', 'u.s','u s','u.s.', 'u s a', 'unite states', 'united state'}
-canadas={'canada', 'can'}
-for element in candyData['Q4: COUNTRY']:
-    if type(element) is not float:
-        for u in usa:
-            if u in element:
-                candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,'USA')
-        for c in canadas:
-            if c in element:
-                candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,'Canada')
-    
-for element in candyData['Q4: COUNTRY']:
-    if type(element) is not float:
-        if 'USA' not in element and 'Canada' not in element:
-            candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,np.NaN)
-
-candyData = candyData[pd.notnull(candyData['Q4: COUNTRY'])]
-candyData
-```
-
-
-

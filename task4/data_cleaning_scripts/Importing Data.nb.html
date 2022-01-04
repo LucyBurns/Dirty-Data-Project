@@ -239,10 +239,6 @@ rawdata_2016 &lt;- read_excel (&quot;../raw_data/boing-boing-candy-2016.xlsx&quo
 rawdata_2017 &lt;- read_excel (&quot;../raw_data/boing-boing-candy-2017.xlsx&quot;)%&gt;% 
   clean_names()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTmV3IG5hbWVzOlxuKiBgYCAtPiAuLi4xMTRcbiJ9 -->
-<pre><code>New names:
-* `` -&gt; ...114</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -343,8 +339,21 @@ combined &lt;- bind_rows(candy_2017, candy_2016, candy_2015)</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY291bnRyeV9jb2RlcyA8LSBjb21iaW5lZCAlPiUgXG4gIGdyb3VwX2J5KGNvdW50cnkpICU+JSBcbiAgc3VtbWFyaXNlKFxuICAgIG4gPSBuKClcbiAgKVxuYGBgIn0= -->
-<pre class="r"><code>country_codes &lt;- combined %&gt;% 
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbiB0aGUgYWdlIGNvbHVtblxuIyBDaGFuZ2UgdGhlIGRhdGEgdHlwZSB0byBpbnRlZ2VyXG5jb21iaW5lZCRhZ2UgPC0gYXMuaW50ZWdlcihjb21iaW5lZCRhZ2UpXG5cbmNvbWJpbmVkIDwtIGNvbWJpbmVkICU+JSBcbiAgbXV0YXRlKGFnZSA9IGlmZWxzZShhZ2UgPD0gMTAwLCBhZ2UsIE5BX2ludGVnZXJfKSlcbmBgYCJ9 -->
+<pre class="r"><code># Clean the age column
+# Change the data type to integer
+combined$age &lt;- as.integer(combined$age)
+
+combined &lt;- combined %&gt;% 
+  mutate(age = ifelse(age &lt;= 100, age, NA_integer_))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDcmVhdGUgYSB0YWJsZSBvZiBjb3VudHJ5IGNvZGVzIC0gdG8gdGVzdCBjbGVhbmluZyBvblxuY291bnRyeV9jb2RlcyA8LSBjb21iaW5lZCAlPiUgXG4gIGdyb3VwX2J5KGNvdW50cnkpICU+JSBcbiAgc3VtbWFyaXNlKFxuICAgIG4gPSBuKClcbiAgKVxuYGBgIn0= -->
+<pre class="r"><code># Create a table of country codes - to test cleaning on
+country_codes &lt;- combined %&gt;% 
   group_by(country) %&gt;% 
   summarise(
     n = n()
@@ -354,71 +363,79 @@ combined &lt;- bind_rows(candy_2017, candy_2016, candy_2015)</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW1lbmRlZF9jb3VudHJ5X2NvZGVzPC0gY291bnRyeV9jb2RlcyAlPiUgXG4gIG11dGF0ZShcbiAgICBjb3VudHJ5ID0gaWZfZWxzZShjb3VudHJ5ID09IFxuICAgICAgICAgICAgICAoXCJ1c2FcIixcIlRoZSBVbml0ZWQgU3RhdGVzXCIpIFwiVVNBXCIsIGNvdW50cnkpXG5gYGAifQ== -->
-<pre class="r"><code>amended_country_codes&lt;- country_codes %&gt;% 
-  mutate(
-    country = if_else(country == 
-              (&quot;usa&quot;,&quot;The United States&quot;) &quot;USA&quot;, country)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDaGFuZ2UgdGhlIGNvdW50cnkgY29kZSB0byBsb3dlciBjYXNlXG5jb3VudHJ5X2NvZGVzPC0gY291bnRyeV9jb2RlcyAlPiVcbiAgbXV0YXRlKGNvdW50cnkgPSBzdHJfdG9fbG93ZXIoY291bnRyeSkpIFxuYGBgIn0= -->
+<pre class="r"><code># Change the country code to lower case
+country_codes&lt;- country_codes %&gt;%
+  mutate(country = str_to_lower(country)) </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IHVuZXhwZWN0ZWQgJywnIGluOlxuXCIgICAgY291bnRyeSA9IGlmX2Vsc2UoY291bnRyeSA9PSBcbiAgICAgICAgICAgICAgKFwidXNhXCIsXCJcbiJ9 -->
-<pre><code>Error: unexpected &#39;,&#39; in:
-&quot;    country = if_else(country == 
-              (&quot;usa&quot;,&quot;</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW1lbmRlZF9jb3VudHJ5X2NvZGVzICU+JSBcbiAgZ3JvdXBfYnkoY291bnRyeSkgJT4lIFxuICBzdW1tYXJpc2UoXG4gICAgbiA9IG4oKVxuICApXG5gYGAifQ== -->
-<pre class="r"><code>amended_country_codes %&gt;% 
-  group_by(country) %&gt;% 
-  summarise(
-    n = n()
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDcmVhdGUgVVNBIHBhdHRlcm5cbnVzYV9wYXR0ZXJuIDwtIGMoXCJ1c2F1c2F1c2F8dXNhc3x1c2FhfHVzYT8gaGFyZCB0byB0ZWxsIGFueW1vcmUuLnx1c2EhISEhISF8dXNhISB1c2EhfHVzYSF8dXNhIHVzYSB1c2EhISEhfHVzYSB1c2EgdXNhIHVzYXx1c2F1c2F1c2F8dXNhc3x1c2FhfHVzYT8gaGFyZCB0byB0ZWxsIGFueW1vcmUuLnx1c2EhISEhISF8dXNhISB1c2EhfHVzYSF8dXNhIHVzYSB1c2EhISEhfHVzYSB1c2EgdXNhIHVzYXx1c2EgdXNhIHVzYXx1c2F8dXNhfHVuaXRzIHN0YXRlc3x1bml0ZWQgc3RzdGVzfHVuaXRlZCAgICAgIHN0c3Rlc3x1c2F8dXN8dXNhfHVuaXRlZCBzdGF0ZXMgb2YgYW1lcmljYXx1c3x1bml0ZWQgc3RhdGVzfHVuaXRlZCBzdGF0ZXN8dS5zLmEufHVuaXRlZCBzdGF0ZXMgb2YgYW1lcmljYXxhbWVyaWNhfGFtZXJpY2F8dS5zLnxtdXJpY2F8dW5pdGVzIHN0YXRlc3x1cyBvZiBhfHVuaXRlZCBzdGF0ZXx1c2EhIHVzYSEgdXNhIXxtZXJpY2F8dGhlIHVuaXRlZCBzdGF0ZXN8dW5pdGVkIHNhdGVzfHVuaXRlZCBzdGF0ZWR8dXNzYXxhaGVtLi4uLmFtZXJjYXxuLiBhbWVyaWNhfHRoZSBiZXN0IG9uZSAtIHVzYXx0aGUgdW5pdGVkIHN0YXRlcyBvZiBhbWVyaWNhfFx0dGhlIHlvbyBlc3Mgb2YgYWFheXl5eXl5fHUgc3x1IHMgYXx1LnMufHUucy5hLnx1bmllZCBzdGF0ZXN8dW5oaW5nZWQgc3RhdGVzfHVuaWVkIHN0YXRlc3x1bml0ZSBzdGF0ZXN8dW5pdGVkICBzdGF0ZXMgb2YgYW1lcmljYXx1bml0ZWQgc3RhZXN8dW5pdGVkIHN0YXRlYXx1bml0ZWQgc3RhdGVzfHVuaXRlZCBzdGF0ZXN8dW5pdGVkIHN0YXRzc3x1bml0ZWQgc3RldGVzfFx0dW5pdGVkIHN0c3Rlc3x1bml0ZWQgc3RzdGVzfHVuaXRzIHN0YXRlc3x1c2F8dXNhIHVzYSB1c2F8dXNhIHVzYSB1c2EgdXNhfHVzYSB1c2EgdXNhISEhIXx1c2EhfHVzYSEgdXNhIXx1c2EhISEhISF8dXNhPyBoYXJkIHRvIHRlbGwgYW55bW9yZS4ufHVzYWF8dXNhc3x1c2F1c2F1c2F8dHJ1bXBpc3RhbnxhbGFza2F8aSBwcmV0ZW5kIHRvIGJlIGZyb20gY2FuYWRhLCBidXQgaSBhbSByZWFsbHkgZnJvbSB0aGUgdXNhLnxcdFxuZmVhciBhbmQgbG9hdGhpbmd8dW5pdGVkIHN0c3Rlc3x1c2Egb2YgYXx1c2Egb2YgdXNhfHVzYSB1c2F8dXNhYXx1c2FhfHVzYWE/IGhhcmQgdG8gdGVsbCBhbnltb3JlLi58XHRcbnVzYWEufHVzYWEufHVzYWR8dXNhc2F8bmV3IHlvcmt8bmV3IGplcnNleXxtdXJyaWthfHRoZSB5b28gZXNzIG9mIGFhYXl5eXl5eVwiKVxuYGBgIn0= -->
+<pre class="r"><code># Create USA pattern
+usa_pattern &lt;- c(&quot;usausausa|usas|usaa|usa? hard to tell anymore..|usa!!!!!!|usa! usa!|usa!|usa usa usa!!!!|usa usa usa usa|usausausa|usas|usaa|usa? hard to tell anymore..|usa!!!!!!|usa! usa!|usa!|usa usa usa!!!!|usa usa usa usa|usa usa usa|usa|usa|units states|united ststes|united      ststes|usa|us|usa|united states of america|us|united states|united states|u.s.a.|united states of america|america|america|u.s.|murica|unites states|us of a|united state|usa! usa! usa!|merica|the united states|united sates|united stated|ussa|ahem....amerca|n. america|the best one - usa|the united states of america|  the yoo ess of aaayyyyyy|u s|u s a|u.s.|u.s.a.|unied states|unhinged states|unied states|unite states|united  states of america|united staes|united statea|united states|united states|united statss|united stetes| united ststes|united ststes|units states|usa|usa usa usa|usa usa usa usa|usa usa usa!!!!|usa!|usa! usa!|usa!!!!!!|usa? hard to tell anymore..|usaa|usas|usausausa|trumpistan|alaska|i pretend to be from canada, but i am really from the usa.| 
+fear and loathing|united ststes|usa of a|usa of usa|usa usa|usaa|usaa|usaa? hard to tell anymore..| 
+usaa.|usaa.|usad|usasa|new york|new jersey|murrika|the yoo ess of aaayyyyyy&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudWtfcGF0dGVybiA8LSBjKFwiZW5kbGFuZHxlbmdsYW5kfHVuaXRlZCBraW5kb218dW5pdGVkIGtpbmdkb218dWt8dS5rLnxzY290bGFuZFwiKVxuYGBgIn0= -->
+<pre class="r"><code>uk_pattern &lt;- c(&quot;endland|england|united kindom|united kingdom|uk|u.k.|scotland&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDaGFuZ2UgdGhlIGNvZGVzIGluIHRoZSB0ZXN0IGNvdW50cnlfY29kZSB0YWJsZVxuY291bnRyeV9jb2RlcyA8LSBjb3VudHJ5X2NvZGVzICU+JSBcbiAgbXV0YXRlKGNvdW50cnkyID0gY2FzZV93aGVuKFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJub3RbXFxcXHNdezEsfVwiKSB+IE5BX2NoYXJhY3Rlcl8sXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcImF1c3RyYWxpYVwiKSB+IFwib3pcIixcbiAgICBzdHJfZGV0ZWN0KGNvdW50cnksIFwic292aWV0IGNhbnVja2lzdGFuXCIpIH4gXCJvdGhlclwiLCAgIFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJhdXN0cmlhXCIpIH4gXCJvdGhlclwiLFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gXCJ8XCIpKSB+IFwidXNhXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBzdHJfYyh1a19wYXR0ZXJuLCBjb2xsYXBzZSA9IFwifFwiKSkgfiBcInVrXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcIl5jYW5cIikgfiBcImNhbmFkYVwiLFxuICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLFxuICAgIFRSVUUgfiBcIm90aGVyXCIpXG4gIClcbmBgYCJ9 -->
+<pre class="r"><code># Change the codes in the test country_code table
+country_codes &lt;- country_codes %&gt;% 
+  mutate(country2 = case_when(
+    str_detect(country, &quot;not[\\s]{1,}&quot;) ~ NA_character_,
+    str_detect(country, &quot;australia&quot;) ~ &quot;oz&quot;,
+    str_detect(country, &quot;soviet canuckistan&quot;) ~ &quot;other&quot;,   
+    str_detect(country, &quot;austria&quot;) ~ &quot;other&quot;,
+    str_detect(country, str_c(usa_pattern, collapse = &quot;|&quot;)) ~ &quot;usa&quot;,
+    str_detect(country, str_c(uk_pattern, collapse = &quot;|&quot;)) ~ &quot;uk&quot;,
+    str_detect(country, &quot;^can&quot;) ~ &quot;canada&quot;,
+    is.na(country) == TRUE ~ NA_character_,
+    TRUE ~ &quot;other&quot;)
   )</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGF0dGVybiA8LSBcIlsoaT8pdW5pdGVkXSBbKGk/KXN0XVwiXG5cbm5ld19jb3VudHJ5IDwtIGNvdW50cnlfY29kZXMkY291bnRyeSAlPiVcbiAgc3RyX3JlcGxhY2VfYWxsKHBhdHRlcm4sIFwiVVNBXCIpXG5cbm5ld19jb3VudHJ5XG5gYGAifQ== -->
-<pre class="r"><code>pattern &lt;- &quot;[(i?)united] [(i?)st]&quot;
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJbiB0aGUgY29tYmluZWQgdGFibGUgXG4jICAgICBjaGFuZ2UgdGhlIGNvdW50cnkgY29kZSB0byBsb3dlciBjYXNlXG4jICAgICB1c2luZyB0aGUgcGF0dGVybnMgcmVwbGFjZSB0aGUgdWsgYW5kIHVzYSBmaWVsZHNcbiMgICAgIHB1dCB0aGlzIG5ldyBjb2RlIGludG8gYSBuZXcgY29sdW1uIGNhbGxlZCBjbGVhbl9jb3VudHJ5XG4jICAgICBjcmVhdGUgYSBuZXcgdGFibGUgd2l0aCBjb2x1bW5zIGluIHRoZSBjb3JyZWN0IG9yZGVyXG5cbmNvbWJpbmVkPC0gY29tYmluZWQgJT4lXG4gIG11dGF0ZShjb3VudHJ5ID0gc3RyX3RvX2xvd2VyKGNvdW50cnkpKSBcblxuXG5jb21iaW5lZCA8LSBjb21iaW5lZCAlPiUgXG4gIG11dGF0ZShjb3VudHJ5ID0gY2FzZV93aGVuKFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJub3RbXFxcXHNdezEsfVwiKSB+IE5BX2NoYXJhY3Rlcl8sXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcImF1c3RyYWxpYVwiKSB+IFwib3pcIixcbiAgICBzdHJfZGV0ZWN0KGNvdW50cnksIFwic292aWV0IGNhbnVja2lzdGFuXCIpIH4gXCJvdGhlclwiLCAgIFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJhdXN0cmlhXCIpIH4gXCJvdGhlclwiLFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gXCJ8XCIpKSB+IFwidXNhXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBzdHJfYyh1a19wYXR0ZXJuLCBjb2xsYXBzZSA9IFwifFwiKSkgfiBcInVrXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcIl5jYW5cIikgfiBcImNhbmFkYVwiLFxuICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLFxuICAgIFRSVUUgfiBcIm90aGVyXCIpXG4gIClcbmBgYCJ9 -->
+<pre class="r"><code># In the combined table 
+#     change the country code to lower case
+#     using the patterns replace the uk and usa fields
+#     put this new code into a new column called clean_country
+#     create a new table with columns in the correct order
 
-new_country &lt;- country_codes$country %&gt;%
-  str_replace_all(pattern, &quot;USA&quot;)
+combined&lt;- combined %&gt;%
+  mutate(country = str_to_lower(country)) 
 
-new_country</code></pre>
+
+combined &lt;- combined %&gt;% 
+  mutate(country = case_when(
+    str_detect(country, &quot;not[\\s]{1,}&quot;) ~ NA_character_,
+    str_detect(country, &quot;australia&quot;) ~ &quot;oz&quot;,
+    str_detect(country, &quot;soviet canuckistan&quot;) ~ &quot;other&quot;,   
+    str_detect(country, &quot;austria&quot;) ~ &quot;other&quot;,
+    str_detect(country, str_c(usa_pattern, collapse = &quot;|&quot;)) ~ &quot;usa&quot;,
+    str_detect(country, str_c(uk_pattern, collapse = &quot;|&quot;)) ~ &quot;uk&quot;,
+    str_detect(country, &quot;^can&quot;) ~ &quot;canada&quot;,
+    is.na(country) == TRUE ~ NA_character_,
+    TRUE ~ &quot;other&quot;)
+  )</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FuZHlEYXRhWydRNDogQ09VTlRSWSddPWNhbmR5RGF0YVsnUTQ6IENPVU5UUlknXS5zdHIubG93ZXIoKVxudXNhPXsndXNhJywgJ211cmljYScsICd1cycsICd1bml0ZWQgc3RhdGVzJywnYW1lcmljYScsICd1LnMnLCd1IHMnLCd1LnMuJywgJ3UgcyBhJywgJ3VuaXRlIHN0YXRlcycsICd1bml0ZWQgc3RhdGUnfVxuY2FuYWRhcz17J2NhbmFkYScsICdjYW4nfVxuZm9yIGVsZW1lbnQgaW4gY2FuZHlEYXRhWydRNDogQ09VTlRSWSddOlxuICAgIGlmIHR5cGUoZWxlbWVudCkgaXMgbm90IGZsb2F0OlxuICAgICAgICBmb3IgdSBpbiB1c2E6XG4gICAgICAgICAgICBpZiB1IGluIGVsZW1lbnQ6XG4gICAgICAgICAgICAgICAgY2FuZHlEYXRhWydRNDogQ09VTlRSWSddID0gY2FuZHlEYXRhWydRNDogQ09VTlRSWSddLnJlcGxhY2UoZWxlbWVudCwnVVNBJylcbiAgICAgICAgZm9yIGMgaW4gY2FuYWRhczpcbiAgICAgICAgICAgIGlmIGMgaW4gZWxlbWVudDpcbiAgICAgICAgICAgICAgICBjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10gPSBjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10ucmVwbGFjZShlbGVtZW50LCdDYW5hZGEnKVxuICAgIFxuZm9yIGVsZW1lbnQgaW4gY2FuZHlEYXRhWydRNDogQ09VTlRSWSddOlxuICAgIGlmIHR5cGUoZWxlbWVudCkgaXMgbm90IGZsb2F0OlxuICAgICAgICBpZiAnVVNBJyBub3QgaW4gZWxlbWVudCBhbmQgJ0NhbmFkYScgbm90IGluIGVsZW1lbnQ6XG4gICAgICAgICAgICBjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10gPSBjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10ucmVwbGFjZShlbGVtZW50LG5wLk5hTilcblxuY2FuZHlEYXRhID0gY2FuZHlEYXRhW3BkLm5vdG51bGwoY2FuZHlEYXRhWydRNDogQ09VTlRSWSddKV1cbmNhbmR5RGF0YVxuYGBgIn0= -->
-<pre class="r"><code>candyData[&#39;Q4: COUNTRY&#39;]=candyData[&#39;Q4: COUNTRY&#39;].str.lower()
-usa={&#39;usa&#39;, &#39;murica&#39;, &#39;us&#39;, &#39;united states&#39;,&#39;america&#39;, &#39;u.s&#39;,&#39;u s&#39;,&#39;u.s.&#39;, &#39;u s a&#39;, &#39;unite states&#39;, &#39;united state&#39;}
-canadas={&#39;canada&#39;, &#39;can&#39;}
-for element in candyData[&#39;Q4: COUNTRY&#39;]:
-    if type(element) is not float:
-        for u in usa:
-            if u in element:
-                candyData[&#39;Q4: COUNTRY&#39;] = candyData[&#39;Q4: COUNTRY&#39;].replace(element,&#39;USA&#39;)
-        for c in canadas:
-            if c in element:
-                candyData[&#39;Q4: COUNTRY&#39;] = candyData[&#39;Q4: COUNTRY&#39;].replace(element,&#39;Canada&#39;)
-    
-for element in candyData[&#39;Q4: COUNTRY&#39;]:
-    if type(element) is not float:
-        if &#39;USA&#39; not in element and &#39;Canada&#39; not in element:
-            candyData[&#39;Q4: COUNTRY&#39;] = candyData[&#39;Q4: COUNTRY&#39;].replace(element,np.NaN)
-
-candyData = candyData[pd.notnull(candyData[&#39;Q4: COUNTRY&#39;])]
-candyData</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTZXR1cCBwYWNrYWdlcyAtLS0tCgpgYGB7cn0KbGlicmFyeSAodGlkeXZlcnNlKQpsaWJyYXJ5IChyZWFkeGwpCmxpYnJhcnkgKGphbml0b3IpCmBgYAoKIyBJbXBvcnQgdGhlIEV4Y2VsIERhdGEgLS0tLQoKYGBge3J9CnJhd2RhdGFfMjAxNSA8LSByZWFkX2V4Y2VsICgiLi4vcmF3X2RhdGEvYm9pbmctYm9pbmctY2FuZHktMjAxNS54bHN4IikgJT4lIAogIGNsZWFuX25hbWVzKCkKcmF3ZGF0YV8yMDE2IDwtIHJlYWRfZXhjZWwgKCIuLi9yYXdfZGF0YS9ib2luZy1ib2luZy1jYW5keS0yMDE2Lnhsc3giKSU+JSAKICBjbGVhbl9uYW1lcygpCnJhd2RhdGFfMjAxNyA8LSByZWFkX2V4Y2VsICgiLi4vcmF3X2RhdGEvYm9pbmctYm9pbmctY2FuZHktMjAxNy54bHN4IiklPiUgCiAgY2xlYW5fbmFtZXMoKQpgYGAKCmBgYHtyfQojIFRoaXMgc3RyaXBzIG91dCB0aGUgcTZfIGZyb20gdGhlIGJlZ2lubmluZyBvZiB0aGUgY29sdW1uIG5hbWVzCm5hbWVzKHJhd2RhdGFfMjAxNykgPSBnc3ViKHBhdHRlcm4gPSAiXnFbMC05XV8iLCByZXBsYWNlbWVudCA9ICIiLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgeCA9IG5hbWVzKHJhd2RhdGFfMjAxNykpCmBgYAoKYGBge3J9CiMgUmVtb3ZlIHVud2FudGVkIGNvbHVtbnMKY3V0XzIwMTUgPC0gcmF3ZGF0YV8yMDE1ICU+JSBzZWxlY3QoMjo5NikKY3V0XzIwMTYgPC0gcmF3ZGF0YV8yMDE2ICU+JSBzZWxlY3QoMjoxMDYpCmN1dF8yMDE3IDwtIHJhd2RhdGFfMjAxNyAlPiUgc2VsZWN0KDI6MTA5KQpgYGAKCmBgYHtyfQojIFJlbmFtZSBjb2x1bW5zIDIwMTUKY2FuZHlfMjAxNSA8LQogIGN1dF8yMDE1ICU+JSAKICAgIHJlbmFtZSgKICAgICAgYWdlID0gaG93X29sZF9hcmVfeW91LAogICAgICBnb2luZ19vdXQgPSBhcmVfeW91X2dvaW5nX2FjdHVhbGx5X2dvaW5nX3RyaWNrX29yX3RyZWF0aW5nX3lvdXJzZWxmLAogICAgICBib25rZXJzX3RoZV9jYW5keSA9IGJvbmtlcnMsCiAgICAgIGJveG9fcmFpc2lucyA9IGJveF9vX3JhaXNpbnMsCiAgICAgIGhlcnNoZXlzX2RhcmtfY2hvY29sYXRlID0gZGFya19jaG9jb2xhdGVfaGVyc2hleSwKICAgICAgaGVyc2hleXNfa2lzc2VzID0gaGVyc2hleV9zX2tpc3NhYmxlcywKICAgICAgbGljb3JpY2VfeWVzX2JsYWNrID0gbGljb3JpY2UsCiAgICAgIHN3ZWV0dW1zX2FfZnJpZW5kX3RvX2RpYWJldGVzID0gc3dlZXR1bXMKICAgKQpgYGAKCmBgYHtyfQojIFJlbmFtZSBjb2x1bW5zIDIwMTYKY2FuZHlfMjAxNiA8LQogIGN1dF8yMDE2ICU+JSAKICAgIHJlbmFtZSgKICAgICAgYWdlID0gaG93X29sZF9hcmVfeW91LAogICAgICBnb2luZ19vdXQgPSBhcmVfeW91X2dvaW5nX2FjdHVhbGx5X2dvaW5nX3RyaWNrX29yX3RyZWF0aW5nX3lvdXJzZWxmLAogICAgICBnZW5kZXIgPSB5b3VyX2dlbmRlciwKICAgICAgY291bnRyeSA9IHdoaWNoX2NvdW50cnlfZG9feW91X2xpdmVfaW4sCiAgICAgIHN0YXRlX3Byb3ZpbmNlX2NvdW50eV9ldGMgPSB3aGljaF9zdGF0ZV9wcm92aW5jZV9jb3VudHlfZG9feW91X2xpdmVfaW4KICAgKQpgYGAKCmBgYHtyfQojIFJlbmFtZSBjb2x1bW5zIDIwMTcKY2FuZHlfMjAxNyA8LQogIGN1dF8yMDE3ICU+JSAKICAgIHJlbmFtZSgKICAgICAgYW5vbnltb3VzX2Jyb3duX2dsb2JzX3RoYXRfY29tZV9pbl9ibGFja19hbmRfb3JhbmdlX3dyYXBwZXJzID0gCiAgICAgICAgYW5vbnltb3VzX2Jyb3duX2dsb2JzX3RoYXRfY29tZV9pbl9ibGFja19hbmRfb3JhbmdlX3dyYXBwZXJzX2Ffa19hX21hcnlfamFuZXMKICAgKQpgYGAKCmBgYHtyfQojIENvbXBhcmUgZGF0YXNldCBjb2x1bW5zCmNvbXBhcmlzb24gPC0gY29tcGFyZV9kZl9jb2xzKGNhbmR5XzIwMTcsIGNhbmR5XzIwMTYsIGNhbmR5XzIwMTUpCmBgYAoKYGBge3J9CiMgQWRkIGluIGEgY29sdW1uIGZvciB0aGUgeWVhciBhbmQgbW92ZSB0aGF0IHRvIHRoZSBmcm9udApjYW5keV8yMDE3Wyd5ZWFyJ109MjAxNwogIGNhbmR5XzIwMTcgPC0gY2FuZHlfMjAxN1ssIGMoMTA5LDE6MTA4KV0KY2FuZHlfMjAxNlsneWVhciddPTIwMTYKICBjYW5keV8yMDE2IDwtIGNhbmR5XzIwMTZbLCBjKDEwNiwxOjEwNSldCmNhbmR5XzIwMTVbJ3llYXInXT0yMDE1CiAgY2FuZHlfMjAxNSA8LSBjYW5keV8yMDE1WywgYyg5NiwxOjk1KV0KYGBgCgpgYGB7cn0KIyBDb21iaW5lIGFsbCB0aHJlZSBkYXRhIHNldHMgaW50byBvbmUKY29tYmluZWQgPC0gYmluZF9yb3dzKGNhbmR5XzIwMTcsIGNhbmR5XzIwMTYsIGNhbmR5XzIwMTUpCmBgYAoKYGBge3J9CmNvdW50cnlfY29kZXMgPC0gY29tYmluZWQgJT4lIAogIGdyb3VwX2J5KGNvdW50cnkpICU+JSAKICBzdW1tYXJpc2UoCiAgICBuID0gbigpCiAgKQpgYGAKCmBgYHtyfQphbWVuZGVkX2NvdW50cnlfY29kZXM8LSBjb3VudHJ5X2NvZGVzICU+JSAKICBtdXRhdGUoCiAgICBjb3VudHJ5ID0gaWZfZWxzZShjb3VudHJ5ID09IAogICAgICAgICAgICAgICgidXNhIiwiVGhlIFVuaXRlZCBTdGF0ZXMiKSAiVVNBIiwgY291bnRyeSkKICAgIAogICkKYGBgCgpgYGB7cn0KYW1lbmRlZF9jb3VudHJ5X2NvZGVzICU+JSAKICBncm91cF9ieShjb3VudHJ5KSAlPiUgCiAgc3VtbWFyaXNlKAogICAgbiA9IG4oKQogICkKYGBgCgpgYGB7cn0KcGF0dGVybiA8LSAiWyhpPyl1bml0ZWRdIFsoaT8pc3RdIgoKbmV3X2NvdW50cnkgPC0gY291bnRyeV9jb2RlcyRjb3VudHJ5ICU+JQogIHN0cl9yZXBsYWNlX2FsbChwYXR0ZXJuLCAiVVNBIikKCm5ld19jb3VudHJ5CmBgYAoKYGBge3J9CmNhbmR5RGF0YVsnUTQ6IENPVU5UUlknXT1jYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10uc3RyLmxvd2VyKCkKdXNhPXsndXNhJywgJ211cmljYScsICd1cycsICd1bml0ZWQgc3RhdGVzJywnYW1lcmljYScsICd1LnMnLCd1IHMnLCd1LnMuJywgJ3UgcyBhJywgJ3VuaXRlIHN0YXRlcycsICd1bml0ZWQgc3RhdGUnfQpjYW5hZGFzPXsnY2FuYWRhJywgJ2Nhbid9CmZvciBlbGVtZW50IGluIGNhbmR5RGF0YVsnUTQ6IENPVU5UUlknXToKICAgIGlmIHR5cGUoZWxlbWVudCkgaXMgbm90IGZsb2F0OgogICAgICAgIGZvciB1IGluIHVzYToKICAgICAgICAgICAgaWYgdSBpbiBlbGVtZW50OgogICAgICAgICAgICAgICAgY2FuZHlEYXRhWydRNDogQ09VTlRSWSddID0gY2FuZHlEYXRhWydRNDogQ09VTlRSWSddLnJlcGxhY2UoZWxlbWVudCwnVVNBJykKICAgICAgICBmb3IgYyBpbiBjYW5hZGFzOgogICAgICAgICAgICBpZiBjIGluIGVsZW1lbnQ6CiAgICAgICAgICAgICAgICBjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10gPSBjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10ucmVwbGFjZShlbGVtZW50LCdDYW5hZGEnKQogICAgCmZvciBlbGVtZW50IGluIGNhbmR5RGF0YVsnUTQ6IENPVU5UUlknXToKICAgIGlmIHR5cGUoZWxlbWVudCkgaXMgbm90IGZsb2F0OgogICAgICAgIGlmICdVU0EnIG5vdCBpbiBlbGVtZW50IGFuZCAnQ2FuYWRhJyBub3QgaW4gZWxlbWVudDoKICAgICAgICAgICAgY2FuZHlEYXRhWydRNDogQ09VTlRSWSddID0gY2FuZHlEYXRhWydRNDogQ09VTlRSWSddLnJlcGxhY2UoZWxlbWVudCxucC5OYU4pCgpjYW5keURhdGEgPSBjYW5keURhdGFbcGQubm90bnVsbChjYW5keURhdGFbJ1E0OiBDT1VOVFJZJ10pXQpjYW5keURhdGEKYGBgCgoKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTZXR1cCBwYWNrYWdlcyAtLS0tCgpgYGB7cn0KbGlicmFyeSAodGlkeXZlcnNlKQpsaWJyYXJ5IChyZWFkeGwpCmxpYnJhcnkgKGphbml0b3IpCmBgYAoKIyBJbXBvcnQgdGhlIEV4Y2VsIERhdGEgLS0tLQoKYGBge3J9CnJhd2RhdGFfMjAxNSA8LSByZWFkX2V4Y2VsICgiLi4vcmF3X2RhdGEvYm9pbmctYm9pbmctY2FuZHktMjAxNS54bHN4IikgJT4lIAogIGNsZWFuX25hbWVzKCkKcmF3ZGF0YV8yMDE2IDwtIHJlYWRfZXhjZWwgKCIuLi9yYXdfZGF0YS9ib2luZy1ib2luZy1jYW5keS0yMDE2Lnhsc3giKSU+JSAKICBjbGVhbl9uYW1lcygpCnJhd2RhdGFfMjAxNyA8LSByZWFkX2V4Y2VsICgiLi4vcmF3X2RhdGEvYm9pbmctYm9pbmctY2FuZHktMjAxNy54bHN4IiklPiUgCiAgY2xlYW5fbmFtZXMoKQpgYGAKCmBgYHtyfQojIFRoaXMgc3RyaXBzIG91dCB0aGUgcTZfIGZyb20gdGhlIGJlZ2lubmluZyBvZiB0aGUgY29sdW1uIG5hbWVzCm5hbWVzKHJhd2RhdGFfMjAxNykgPSBnc3ViKHBhdHRlcm4gPSAiXnFbMC05XV8iLCByZXBsYWNlbWVudCA9ICIiLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgeCA9IG5hbWVzKHJhd2RhdGFfMjAxNykpCmBgYAoKYGBge3J9CiMgUmVtb3ZlIHVud2FudGVkIGNvbHVtbnMKY3V0XzIwMTUgPC0gcmF3ZGF0YV8yMDE1ICU+JSBzZWxlY3QoMjo5NikKY3V0XzIwMTYgPC0gcmF3ZGF0YV8yMDE2ICU+JSBzZWxlY3QoMjoxMDYpCmN1dF8yMDE3IDwtIHJhd2RhdGFfMjAxNyAlPiUgc2VsZWN0KDI6MTA5KQpgYGAKCmBgYHtyfQojIFJlbmFtZSBjb2x1bW5zIDIwMTUKY2FuZHlfMjAxNSA8LQogIGN1dF8yMDE1ICU+JSAKICAgIHJlbmFtZSgKICAgICAgYWdlID0gaG93X29sZF9hcmVfeW91LAogICAgICBnb2luZ19vdXQgPSBhcmVfeW91X2dvaW5nX2FjdHVhbGx5X2dvaW5nX3RyaWNrX29yX3RyZWF0aW5nX3lvdXJzZWxmLAogICAgICBib25rZXJzX3RoZV9jYW5keSA9IGJvbmtlcnMsCiAgICAgIGJveG9fcmFpc2lucyA9IGJveF9vX3JhaXNpbnMsCiAgICAgIGhlcnNoZXlzX2RhcmtfY2hvY29sYXRlID0gZGFya19jaG9jb2xhdGVfaGVyc2hleSwKICAgICAgaGVyc2hleXNfa2lzc2VzID0gaGVyc2hleV9zX2tpc3NhYmxlcywKICAgICAgbGljb3JpY2VfeWVzX2JsYWNrID0gbGljb3JpY2UsCiAgICAgIHN3ZWV0dW1zX2FfZnJpZW5kX3RvX2RpYWJldGVzID0gc3dlZXR1bXMKICAgKQpgYGAKCmBgYHtyfQojIFJlbmFtZSBjb2x1bW5zIDIwMTYKY2FuZHlfMjAxNiA8LQogIGN1dF8yMDE2ICU+JSAKICAgIHJlbmFtZSgKICAgICAgYWdlID0gaG93X29sZF9hcmVfeW91LAogICAgICBnb2luZ19vdXQgPSBhcmVfeW91X2dvaW5nX2FjdHVhbGx5X2dvaW5nX3RyaWNrX29yX3RyZWF0aW5nX3lvdXJzZWxmLAogICAgICBnZW5kZXIgPSB5b3VyX2dlbmRlciwKICAgICAgY291bnRyeSA9IHdoaWNoX2NvdW50cnlfZG9feW91X2xpdmVfaW4sCiAgICAgIHN0YXRlX3Byb3ZpbmNlX2NvdW50eV9ldGMgPSB3aGljaF9zdGF0ZV9wcm92aW5jZV9jb3VudHlfZG9feW91X2xpdmVfaW4KICAgKQpgYGAKCmBgYHtyfQojIFJlbmFtZSBjb2x1bW5zIDIwMTcKY2FuZHlfMjAxNyA8LQogIGN1dF8yMDE3ICU+JSAKICAgIHJlbmFtZSgKICAgICAgYW5vbnltb3VzX2Jyb3duX2dsb2JzX3RoYXRfY29tZV9pbl9ibGFja19hbmRfb3JhbmdlX3dyYXBwZXJzID0gCiAgICAgICAgYW5vbnltb3VzX2Jyb3duX2dsb2JzX3RoYXRfY29tZV9pbl9ibGFja19hbmRfb3JhbmdlX3dyYXBwZXJzX2Ffa19hX21hcnlfamFuZXMKICAgKQpgYGAKCmBgYHtyfQojIENvbXBhcmUgZGF0YXNldCBjb2x1bW5zCmNvbXBhcmlzb24gPC0gY29tcGFyZV9kZl9jb2xzKGNhbmR5XzIwMTcsIGNhbmR5XzIwMTYsIGNhbmR5XzIwMTUpCmBgYAoKYGBge3J9CiMgQWRkIGluIGEgY29sdW1uIGZvciB0aGUgeWVhciBhbmQgbW92ZSB0aGF0IHRvIHRoZSBmcm9udApjYW5keV8yMDE3Wyd5ZWFyJ109MjAxNwogIGNhbmR5XzIwMTcgPC0gY2FuZHlfMjAxN1ssIGMoMTA5LDE6MTA4KV0KY2FuZHlfMjAxNlsneWVhciddPTIwMTYKICBjYW5keV8yMDE2IDwtIGNhbmR5XzIwMTZbLCBjKDEwNiwxOjEwNSldCmNhbmR5XzIwMTVbJ3llYXInXT0yMDE1CiAgY2FuZHlfMjAxNSA8LSBjYW5keV8yMDE1WywgYyg5NiwxOjk1KV0KYGBgCgpgYGB7cn0KIyBDb21iaW5lIGFsbCB0aHJlZSBkYXRhIHNldHMgaW50byBvbmUKY29tYmluZWQgPC0gYmluZF9yb3dzKGNhbmR5XzIwMTcsIGNhbmR5XzIwMTYsIGNhbmR5XzIwMTUpCmBgYAoKYGBge3J9CiMgQ2xlYW4gdGhlIGFnZSBjb2x1bW4KIyBDaGFuZ2UgdGhlIGRhdGEgdHlwZSB0byBpbnRlZ2VyCmNvbWJpbmVkJGFnZSA8LSBhcy5pbnRlZ2VyKGNvbWJpbmVkJGFnZSkKCmNvbWJpbmVkIDwtIGNvbWJpbmVkICU+JSAKICBtdXRhdGUoYWdlID0gaWZlbHNlKGFnZSA8PSAxMDAsIGFnZSwgTkFfaW50ZWdlcl8pKQpgYGAKCgpgYGB7cn0KIyBDcmVhdGUgYSB0YWJsZSBvZiBjb3VudHJ5IGNvZGVzIC0gdG8gdGVzdCBjbGVhbmluZyBvbgpjb3VudHJ5X2NvZGVzIDwtIGNvbWJpbmVkICU+JSAKICBncm91cF9ieShjb3VudHJ5KSAlPiUgCiAgc3VtbWFyaXNlKAogICAgbiA9IG4oKQogICkKYGBgCgpgYGB7cn0KIyBDaGFuZ2UgdGhlIGNvdW50cnkgY29kZSB0byBsb3dlciBjYXNlCmNvdW50cnlfY29kZXM8LSBjb3VudHJ5X2NvZGVzICU+JQogIG11dGF0ZShjb3VudHJ5ID0gc3RyX3RvX2xvd2VyKGNvdW50cnkpKSAKYGBgCgpgYGB7cn0KIyBDcmVhdGUgVVNBIHBhdHRlcm4KdXNhX3BhdHRlcm4gPC0gYygidXNhdXNhdXNhfHVzYXN8dXNhYXx1c2E/IGhhcmQgdG8gdGVsbCBhbnltb3JlLi58dXNhISEhISEhfHVzYSEgdXNhIXx1c2EhfHVzYSB1c2EgdXNhISEhIXx1c2EgdXNhIHVzYSB1c2F8dXNhdXNhdXNhfHVzYXN8dXNhYXx1c2E/IGhhcmQgdG8gdGVsbCBhbnltb3JlLi58dXNhISEhISEhfHVzYSEgdXNhIXx1c2EhfHVzYSB1c2EgdXNhISEhIXx1c2EgdXNhIHVzYSB1c2F8dXNhIHVzYSB1c2F8dXNhfHVzYXx1bml0cyBzdGF0ZXN8dW5pdGVkIHN0c3Rlc3x1bml0ZWQgICAgICBzdHN0ZXN8dXNhfHVzfHVzYXx1bml0ZWQgc3RhdGVzIG9mIGFtZXJpY2F8dXN8dW5pdGVkIHN0YXRlc3x1bml0ZWQgc3RhdGVzfHUucy5hLnx1bml0ZWQgc3RhdGVzIG9mIGFtZXJpY2F8YW1lcmljYXxhbWVyaWNhfHUucy58bXVyaWNhfHVuaXRlcyBzdGF0ZXN8dXMgb2YgYXx1bml0ZWQgc3RhdGV8dXNhISB1c2EhIHVzYSF8bWVyaWNhfHRoZSB1bml0ZWQgc3RhdGVzfHVuaXRlZCBzYXRlc3x1bml0ZWQgc3RhdGVkfHVzc2F8YWhlbS4uLi5hbWVyY2F8bi4gYW1lcmljYXx0aGUgYmVzdCBvbmUgLSB1c2F8dGhlIHVuaXRlZCBzdGF0ZXMgb2YgYW1lcmljYXwJdGhlIHlvbyBlc3Mgb2YgYWFheXl5eXl5fHUgc3x1IHMgYXx1LnMufHUucy5hLnx1bmllZCBzdGF0ZXN8dW5oaW5nZWQgc3RhdGVzfHVuaWVkIHN0YXRlc3x1bml0ZSBzdGF0ZXN8dW5pdGVkICBzdGF0ZXMgb2YgYW1lcmljYXx1bml0ZWQgc3RhZXN8dW5pdGVkIHN0YXRlYXx1bml0ZWQgc3RhdGVzfHVuaXRlZCBzdGF0ZXN8dW5pdGVkIHN0YXRzc3x1bml0ZWQgc3RldGVzfAl1bml0ZWQgc3RzdGVzfHVuaXRlZCBzdHN0ZXN8dW5pdHMgc3RhdGVzfHVzYXx1c2EgdXNhIHVzYXx1c2EgdXNhIHVzYSB1c2F8dXNhIHVzYSB1c2EhISEhfHVzYSF8dXNhISB1c2EhfHVzYSEhISEhIXx1c2E/IGhhcmQgdG8gdGVsbCBhbnltb3JlLi58dXNhYXx1c2FzfHVzYXVzYXVzYXx0cnVtcGlzdGFufGFsYXNrYXxpIHByZXRlbmQgdG8gYmUgZnJvbSBjYW5hZGEsIGJ1dCBpIGFtIHJlYWxseSBmcm9tIHRoZSB1c2EufAkKZmVhciBhbmQgbG9hdGhpbmd8dW5pdGVkIHN0c3Rlc3x1c2Egb2YgYXx1c2Egb2YgdXNhfHVzYSB1c2F8dXNhYXx1c2FhfHVzYWE/IGhhcmQgdG8gdGVsbCBhbnltb3JlLi58CQp1c2FhLnx1c2FhLnx1c2FkfHVzYXNhfG5ldyB5b3JrfG5ldyBqZXJzZXl8bXVycmlrYXx0aGUgeW9vIGVzcyBvZiBhYWF5eXl5eXkiKQpgYGAKCmBgYHtyfQp1a19wYXR0ZXJuIDwtIGMoImVuZGxhbmR8ZW5nbGFuZHx1bml0ZWQga2luZG9tfHVuaXRlZCBraW5nZG9tfHVrfHUuay58c2NvdGxhbmQiKQpgYGAKCmBgYHtyfQojIENoYW5nZSB0aGUgY29kZXMgaW4gdGhlIHRlc3QgY291bnRyeV9jb2RlIHRhYmxlCmNvdW50cnlfY29kZXMgPC0gY291bnRyeV9jb2RlcyAlPiUgCiAgbXV0YXRlKGNvdW50cnkyID0gY2FzZV93aGVuKAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAibm90W1xcc117MSx9IikgfiBOQV9jaGFyYWN0ZXJfLAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAiYXVzdHJhbGlhIikgfiAib3oiLAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAic292aWV0IGNhbnVja2lzdGFuIikgfiAib3RoZXIiLCAgIAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAiYXVzdHJpYSIpIH4gIm90aGVyIiwKICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gInwiKSkgfiAidXNhIiwKICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModWtfcGF0dGVybiwgY29sbGFwc2UgPSAifCIpKSB+ICJ1ayIsCiAgICBzdHJfZGV0ZWN0KGNvdW50cnksICJeY2FuIikgfiAiY2FuYWRhIiwKICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLAogICAgVFJVRSB+ICJvdGhlciIpCiAgKQpgYGAKCmBgYHtyfQojIEluIHRoZSBjb21iaW5lZCB0YWJsZSAKIyAgICAgY2hhbmdlIHRoZSBjb3VudHJ5IGNvZGUgdG8gbG93ZXIgY2FzZQojICAgICB1c2luZyB0aGUgcGF0dGVybnMgcmVwbGFjZSB0aGUgdWsgYW5kIHVzYSBmaWVsZHMKCmNvbWJpbmVkPC0gY29tYmluZWQgJT4lCiAgbXV0YXRlKGNvdW50cnkgPSBzdHJfdG9fbG93ZXIoY291bnRyeSkpIAoKY29tYmluZWQgPC0gY29tYmluZWQgJT4lIAogIG11dGF0ZShjb3VudHJ5ID0gY2FzZV93aGVuKAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAibm90W1xcc117MSx9IikgfiBOQV9jaGFyYWN0ZXJfLAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAiYXVzdHJhbGlhIikgfiAib3oiLAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAic292aWV0IGNhbnVja2lzdGFuIikgfiAib3RoZXIiLCAgIAogICAgc3RyX2RldGVjdChjb3VudHJ5LCAiYXVzdHJpYSIpIH4gIm90aGVyIiwKICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gInwiKSkgfiAidXNhIiwKICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModWtfcGF0dGVybiwgY29sbGFwc2UgPSAifCIpKSB+ICJ1ayIsCiAgICBzdHJfZGV0ZWN0KGNvdW50cnksICJeY2FuIikgfiAiY2FuYWRhIiwKICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLAogICAgVFJVRSB+ICJvdGhlciIpCiAgKQpgYGAK</div>
 
 
 
