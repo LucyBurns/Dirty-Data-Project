@@ -1,0 +1,154 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Setup packages ----
+
+```{r}
+library (tidyverse)
+library (readxl)
+library (janitor)
+```
+
+# Import the Excel Data ----
+
+```{r}
+rawdata_2015 <- read_excel ("../raw_data/boing-boing-candy-2015.xlsx") %>% 
+  clean_names()
+rawdata_2016 <- read_excel ("../raw_data/boing-boing-candy-2016.xlsx")%>% 
+  clean_names()
+rawdata_2017 <- read_excel ("../raw_data/boing-boing-candy-2017.xlsx")%>% 
+  clean_names()
+```
+
+```{r}
+# This strips out the q6_ from the beginning of the column names
+names(rawdata_2017) = gsub(pattern = "^q[0-9]_", replacement = "", 
+                           x = names(rawdata_2017))
+```
+
+```{r}
+# Remove unwanted columns
+cut_2015 <- rawdata_2015 %>% select(2:96)
+cut_2016 <- rawdata_2016 %>% select(2:106)
+cut_2017 <- rawdata_2017 %>% select(2:109)
+```
+
+```{r}
+# Rename columns 2015
+candy_2015 <-
+  cut_2015 %>% 
+    rename(
+      age = how_old_are_you,
+      going_out = are_you_going_actually_going_trick_or_treating_yourself,
+      bonkers_the_candy = bonkers,
+      boxo_raisins = box_o_raisins,
+      hersheys_dark_chocolate = dark_chocolate_hershey,
+      hersheys_kisses = hershey_s_kissables,
+      licorice_yes_black = licorice,
+      sweetums_a_friend_to_diabetes = sweetums
+   )
+```
+
+```{r}
+# Rename columns 2016
+candy_2016 <-
+  cut_2016 %>% 
+    rename(
+      age = how_old_are_you,
+      going_out = are_you_going_actually_going_trick_or_treating_yourself,
+      gender = your_gender,
+      country = which_country_do_you_live_in,
+      state_province_county_etc = which_state_province_county_do_you_live_in
+   )
+```
+
+```{r}
+# Rename columns 2017
+candy_2017 <-
+  cut_2017 %>% 
+    rename(
+      anonymous_brown_globs_that_come_in_black_and_orange_wrappers = 
+        anonymous_brown_globs_that_come_in_black_and_orange_wrappers_a_k_a_mary_janes
+   )
+```
+
+```{r}
+# Compare dataset columns
+comparison <- compare_df_cols(candy_2017, candy_2016, candy_2015)
+```
+
+```{r}
+# Add in a column for the year and move that to the front
+candy_2017['year']=2017
+  candy_2017 <- candy_2017[, c(109,1:108)]
+candy_2016['year']=2016
+  candy_2016 <- candy_2016[, c(106,1:105)]
+candy_2015['year']=2015
+  candy_2015 <- candy_2015[, c(96,1:95)]
+```
+
+```{r}
+# Combine all three data sets into one
+combined <- bind_rows(candy_2017, candy_2016, candy_2015)
+```
+
+```{r}
+country_codes <- combined %>% 
+  group_by(country) %>% 
+  summarise(
+    n = n()
+  )
+```
+
+```{r}
+amended_country_codes<- country_codes %>% 
+  mutate(
+    country = if_else(country == 
+              ("usa","The United States") "USA", country)
+    
+  )
+```
+
+```{r}
+amended_country_codes %>% 
+  group_by(country) %>% 
+  summarise(
+    n = n()
+  )
+```
+
+```{r}
+pattern <- "[(i?)united] [(i?)st]"
+
+new_country <- country_codes$country %>%
+  str_replace_all(pattern, "USA")
+
+new_country
+```
+
+```{r}
+candyData['Q4: COUNTRY']=candyData['Q4: COUNTRY'].str.lower()
+usa={'usa', 'murica', 'us', 'united states','america', 'u.s','u s','u.s.', 'u s a', 'unite states', 'united state'}
+canadas={'canada', 'can'}
+for element in candyData['Q4: COUNTRY']:
+    if type(element) is not float:
+        for u in usa:
+            if u in element:
+                candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,'USA')
+        for c in canadas:
+            if c in element:
+                candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,'Canada')
+    
+for element in candyData['Q4: COUNTRY']:
+    if type(element) is not float:
+        if 'USA' not in element and 'Canada' not in element:
+            candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,np.NaN)
+
+candyData = candyData[pd.notnull(candyData['Q4: COUNTRY'])]
+candyData
+```
+
+
+

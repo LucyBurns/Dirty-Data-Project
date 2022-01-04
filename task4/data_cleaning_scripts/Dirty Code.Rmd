@@ -1,0 +1,82 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+clean_country <- combined %>% 
+  select(country) %>% 
+  mutate(
+    country = recode(country, "USA" = ("United States", "usa") )
+  )
+```
+
+```{r}
+clean_country <-combined %>% 
+  mutate(country = case_when(
+              country == "United States" ~ "USA",
+              country == "usa" ~ "USA",
+              country == "US" ~ "USA",
+              TRUE ~ country)) %>% 
+  count(country)
+```
+
+```{r}
+# replacing "--" with NA
+clean_country <- country_codes %>%
+  mutate(country = replace(country, country ==  c("u s a", "U.s."), "usa"))
+
+```
+
+
+```{r}
+pattern <- "[uU]nited] +[sSt]"
+
+clean_country <- country_codes %>%
+  str_replace(pattern, "USA")
+```
+
+
+
+```{r}
+usa_list <- list(1, "a", TRUE, c(1, 2, 3))
+```
+
+
+```{r}
+candyData['Q4: COUNTRY']=candyData['Q4: COUNTRY'].str.lower()
+usa={'usa', 'murica', 'us', 'united states','america', 'u.s','u s','u.s.', 'u s a', 'unite states', 'united state'}
+canadas={'canada', 'can'}
+for element in candyData['Q4: COUNTRY']:
+    if type(element) is not float:
+        for u in usa:
+            if u in element:
+                candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,'USA')
+        for c in canadas:
+            if c in element:
+                candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,'Canada')
+    
+for element in candyData['Q4: COUNTRY']:
+    if type(element) is not float:
+        if 'USA' not in element and 'Canada' not in element:
+            candyData['Q4: COUNTRY'] = candyData['Q4: COUNTRY'].replace(element,np.NaN)
+
+candyData = candyData[pd.notnull(candyData['Q4: COUNTRY'])]
+candyData
+```
+
+
+```{r}
+all_usa_names <- c("USAUSAUSA", "usas", "USAA", "USA? Hard to tell anymore..", "USA!!!!!!", "USA! USA!", "USA!", "USA USA USA!!!!", "USA USA USA USA",
+                "USA USA USA", "USA (I think but it's an election year so who can really tell)", "USa", "uSA", "Units States", "United ststes", "united      ststes", "usa", "US", "Usa", "United States of America", "us", "united states", "United states", "Us", "U.S.", "U.S.A.", "united states of america", "America", "america", "u.s.", "Murica", "Unites States", "US of A", "United State", "USA! USA! USA!", "Merica", "The United States", "United Sates", "United Stated", "USSA", "'merica", "Ahem....Amerca", "N. America", "the best one - usa", "The United States of America", "	The Yoo Ess of Aaayyyyyy", "U S", "u s a", "U.s.", "u.s.a.", "Unied States", "unhinged states", "Unied States", "unite states", "United  States of America", "United staes", "United Statea", "united States", "UNited States", "United Statss", "United Stetes", "	united ststes", "United ststes", "Units States", "uSA", "USa", "USA (I think but it's an election year so who can really tell)", "USA USA USA", "USA USA USA USA", "USA USA USA!!!!", "USA!", "USA! USA!", "USA!!!!!!", "USA? Hard to tell anymore..", "USAA", "usas", "USAUSAUSA")
+```
+
+```{r}
+
+country_convert_list <- c( "united states" = "usa", "united states of america" = "usa","america" = "usa","usa! usa! usa!" = "usa", "usa! usa! usa!" = "USA", "u.s." = "usa", 
+                           "sub-canadian north usa... 'merica" = "usa", "usa of usa" = "usa", "the best one - usa" = "usa","murica" = "usa","^us$" = "usa", "usa of usa"= "usa",
+                           "england" = "united kingdom","uk" = "united kingdom", "usaa." = "usa") 
+candy_data_1$which_country_do_you_live_in <- str_replace_all(tolower(candy_data_1$which_country_do_you_live_in), country_convert_list)
+```
+
