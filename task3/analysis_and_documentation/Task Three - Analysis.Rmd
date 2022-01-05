@@ -1,0 +1,32 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# Analysis questions 
+
+For each question where we ask for bird names, give the bird's common name, scientific name and species abbreviation.
+
+## Question One
+
+Which bird had the most individual sightings?
+
+## Question Two
+
+Which bird had the highest total count?
+
+## Question Three
+
+Which bird had the highest total count above a latitude of -30?
+
+## Question Four
+
+How many different types of birds were only ever seen in groups of 1?
+
+## Question Five
+
+How many penguins were seen?
+(Hint: there are many types of penguin)

@@ -1,0 +1,34 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(readxl)
+```
+
+```{r}
+# Identify the sheets in the spreadsheet
+excel_sheets("//Users/lucy/Documents/Documents - Barra/Codeclan/Dirty Data Project/Dirty-Data-Project/task3/raw_data/seabirds.xls")
+```
+
+```{r}
+ship_data <- read_excel("//Users/lucy/Documents/Documents - Barra/Codeclan/Dirty Data Project/Dirty-Data-Project/task3/raw_data/seabirds.xls", sheet = "Ship data by record ID")
+bird_data <- read_excel("//Users/lucy/Documents/Documents - Barra/Codeclan/Dirty Data Project/Dirty-Data-Project/task3/raw_data/seabirds.xls", sheet = "Bird data by record ID")
+```
+
+```{r}
+colnames(bird_data)[3]  <- "Species"
+colnames(bird_data)[4]  <- "Scientifc Name"
+colnames(bird_data)[5]  <- "Abbreviation"
+```
+
+```{r}
+bird_data %>% 
+  group_by(Species)
+
+```
+
+

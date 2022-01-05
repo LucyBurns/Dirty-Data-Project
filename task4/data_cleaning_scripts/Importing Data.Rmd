@@ -135,7 +135,7 @@ uk_pattern <- c("endland|england|united kindom|united kingdom|uk|u.k.|scotland")
 country_codes <- country_codes %>% 
   mutate(country2 = case_when(
     str_detect(country, "not[\\s]{1,}") ~ NA_character_,
-    str_detect(country, "australia") ~ "oz",
+    str_detect(country, "australia") ~ "other",
     str_detect(country, "soviet canuckistan") ~ "other",   
     str_detect(country, "austria") ~ "other",
     str_detect(country, str_c(usa_pattern, collapse = "|")) ~ "usa",
@@ -157,7 +157,7 @@ combined<- combined %>%
 combined <- combined %>% 
   mutate(country = case_when(
     str_detect(country, "not[\\s]{1,}") ~ NA_character_,
-    str_detect(country, "australia") ~ "oz",
+    str_detect(country, "australia") ~ "other",
     str_detect(country, "soviet canuckistan") ~ "other",   
     str_detect(country, "austria") ~ "other",
     str_detect(country, str_c(usa_pattern, collapse = "|")) ~ "usa",

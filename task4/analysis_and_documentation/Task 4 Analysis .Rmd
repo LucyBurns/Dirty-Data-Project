@@ -27,7 +27,7 @@ of candy ratings, not number of raters. Don't count missing values)
 # Do not include missing values
 candy_pivot <- combined %>%
   pivot_longer(cols = "100_grand_bar":"peanut_butter_jars",
-            names_to = "code",
+            names_to = "candy",
             values_to = "rating",
             values_drop_na = TRUE
             )
@@ -64,38 +64,199 @@ What was the average age of people who are going out trick or treating and the
 average age of people not going trick or treating?
 
 ```{r}
-combined %>%
-  group_by(going_out) %>%
-  summarise(average_age = mean(age)) %>% 
-  arrange(desc(average_age))
+# Create a table for age analysis
+# Drop the rows with na values in the age column from the table
+age_table <- combined 
+age_table <- drop_na(age_table,age)
 ```
 
+```{r}
+age_table %>%
+  group_by(going_out) %>%
+  summarise(average_age = mean(age)) 
+```
 
+| Are you going out for Hallowe'en? | Average Age |
+|-----------------------------------|-------------|
+| No                                | 39.13550    |
+| Yes                               | 35.01952    |
+| na                                | 42.30120    |
 
+: Average age of people going trick or treating (or staying home)
 
 # Question Three
 
 For each of joy, despair and meh, which candy bar received the most of these
 ratings?
 
+```{r}
+# Create a new table grouping the candies and counting the number of each rating
+# Drop the group by to recreate it as a searchable table
+candy_count <- candy_pivot %>%
+  group_by(candy, rating) %>% 
+  summarise(
+    n = n(),.groups = "drop"
+  )  
+```
+
+```{r}
+# Make the table wider again to show the numbers for each rating type
+candy_ratings <- candy_count %>% 
+  pivot_wider(names_from = rating, values_from = n)
+```
+
+```{r}
+# Find the candy bar that has received the most despair ratings
+candy_ratings %>% 
+  slice_max(DESPAIR)  
+```
+
+```{r}
+# Find the candy bar that has received the most joy ratings
+candy_ratings %>% 
+  slice_max(JOY)  
+```
+
+```{r}
+# Find the candy bar that has received the most meh ratings
+candy_ratings %>% 
+  slice_max(MEH)
+```
+
+The candy bar that has received the most 'despair' ratings is the broken glow
+stick with 7905 ratings.
+
+The candy bar that has received the most 'joy' ratings is any full sized candy
+bar with 7589 ratings.
+
+The candy bar that has received the most 'meh' ratings is lollipops with 1570
+ratings.
+
 # Question Four
 
 How many people rated Starburst as despair?
 
+```{r}
+candy_ratings %>% 
+  filter(candy == "starburst") %>% 
+  select("DESPAIR")
+  
+```
+
+There were 1990 'despair' rating for Starburst.
+
 # Question Five
 
 For the next three questions, count despair as -1, joy as +1 and meh as 0.
+
+```{r}
+# Create a new column to show the rating values
+candy_pivot <- candy_pivot %>% 
+  mutate(rating_value = case_when(
+     (rating == "DESPAIR") ~ -1,
+     (rating == "JOY") ~ 1,
+     (rating == "MEH") ~ 0
+  ))
+```
 
 # Question Six
 
 What was the most popular candy bar by this rating system for each gender in the
 dataset?
 
+```{r}
+candy_pivot %>% 
+# Top candy bar for males
+  filter(gender == "Male") %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+```{r}
+candy_pivot %>% 
+# Top candy bar for females
+  filter(gender == "Female") %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+The top candy bar for both males and females is any full sized candy bar
+
 # Question Seven
 
 What was the most popular candy bar in each year?
+
+```{r}
+candy_pivot %>% 
+# Top candy bar in 2015
+  filter(year == 2015) %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+```{r}
+candy_pivot %>% 
+# Top candy bar in 2016
+  filter(year == 2016) %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+```{r}
+candy_pivot %>% 
+# Top candy bar in 2017
+  filter(year == 2017) %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+Well surprise, surprise - the most popular candy bar in 2015, 2016 and 2017 is
+any full sized candy bar
 
 # Question Eight
 
 What was the most popular candy bar by this rating for people in US, Canada, UK
 and all other countries?
+
+```{r}
+candy_pivot %>% 
+# Top candy bar by country
+  filter(country == "usa") %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+```{r}
+candy_pivot %>% 
+# Top candy bar by country
+  filter(country == "canada") %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+```{r}
+candy_pivot %>% 
+# Top candy bar by country
+  filter(country == "uk") %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+```{r}
+candy_pivot %>% 
+# Top candy bar by country
+  filter(country == "other") %>% 
+  group_by(candy) %>% 
+  summarise(rating_total = sum(rating_value)) %>% 
+  arrange(desc(rating_total))
+```
+
+So, again, the large candy bars are the favourite - except in the UK where hard case seems to be the preferred treat - not very tasty...
