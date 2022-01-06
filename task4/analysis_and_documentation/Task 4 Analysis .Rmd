@@ -17,15 +17,21 @@ library (readxl)
 library (janitor)
 ```
 
+# Import Data
+
+```{r}
+candy_data <- read_csv(here("clean_data/candy_data.csv"))
+```
+
 # Question One
 
-What is the total number of candy ratings given across the three years. (number
-of candy ratings, not number of raters. Don't count missing values)
+What is the total number of candy ratings given across the three years. 
+(number of candy ratings, not number of raters. Don't count missing values)
 
 ```{r}
 # For each year how many candy bars were rated in total
 # Do not include missing values
-candy_pivot <- combined %>%
+candy_pivot <- candy_data %>%
   pivot_longer(cols = "100_grand_bar":"peanut_butter_jars",
             names_to = "candy",
             values_to = "rating",
@@ -66,8 +72,9 @@ average age of people not going trick or treating?
 ```{r}
 # Create a table for age analysis
 # Drop the rows with na values in the age column from the table
-age_table <- combined 
-age_table <- drop_na(age_table,age)
+age_table <- candy_data 
+age_table <- drop_na(age_table,age) %>% 
+  filter(age > 0)
 ```
 
 ```{r}

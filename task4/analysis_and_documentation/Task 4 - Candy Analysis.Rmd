@@ -1,0 +1,303 @@
+---
+title: "Task Four - Candy Data"
+author: "Lucy Burns"
+date: "06/01/2022"
+output: 
+  html_document:
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction to the Dataset
+
+## Data Source
+
+The data used for this task task comes from three years worth of data looking at how people feel about various types of Hallowe'en candy. Boingboing used the data to create a largescale graph showing how people rank the data.
+
+[Data Source: Candy Hierarchy Data](https://www.scq.ubc.ca/so-much-candy-data-seriously/)
+
+A [copy of the 2017 questionnaire](https://www.scq.ubc.ca/wp-content/uploads/2017/10/candyhierarchysurvey2017.pdf) can be found on The University of Columbia website.
+
+## Initial Glimpse of the data
+
+Oh my goodness - this data is messy. The data consists of three excel files:
+
+-   2015 data - comprising of 5630 observations of 124 variables
+
+-   2016 data - comprising of 1259 observations of 123 variables
+
+-   2015 data - comprising of 2460 observations of 120 variables
+
+# Assumptions Made
+
+-   If an age was greater than 100 it was NA
+
+-   If a country could not be labelled as USA/Canada or UK it was changed to 'Other'
+
+# Cleaning and Importing Data
+
+## Importing Libraries
+
+As with most projects a number of libraries/packages need to be accessed. For this task I installed tidyverse (useful for analysis), janitor (useful for cleaning), readxl (as the main dataset is held in excel) and here (to allow the repo to work outside of my local network.
+
+    library(tidyverse)
+    library(janitor)
+    library(readxl)
+    library(here)
+
+## Loading data
+
+The three spreadsheets were imported and the column names cleaned using janitor.
+
+    rawdata_2015 <- read_excel(here("raw_data/boing-boing-candy-2015.xlsx")) %>% 
+      clean_names()
+    rawdata_2016 <- read_excel(here("raw_data/boing-boing-candy-2016.xlsx")) %>% 
+      clean_names()
+    rawdata_2017 <- read_excel(here("raw_data/boing-boing-candy-2017.xlsx")) %>% 
+      clean_names()
+
+## Tidy up Column Names
+
+The 2017 data contains extra text in the column names and this was stripped out.
+
+    names(rawdata_2017) = gsub(pattern = "^q[0-9]_", replacement = "", 
+                               x = names(rawdata_2017))
+
+## Remove Extra columns
+
+Extra columns from each data set were removed, for example there were questions on DVDs and there was an unnecessary time-stamp field.
+
+    cut_2015 <- rawdata_2015 %>% select(2:96)
+    cut_2016 <- rawdata_2016 %>% select(2:106)
+    cut_2017 <- rawdata_2017 %>% select(2:109)
+
+## Rename Columns
+
+Before the three tables can be bolted together the tables need to look similar. There were quite a few tweaks needed on the column names to achieve this. Each of the years needed different changes. Below is the code used for 2015. 2016 and 2017 had similar treatment but each was different.
+
+    candy_2015 <-
+      cut_2015 %>% 
+      rename(
+        age = how_old_are_you,
+        going_out = are_you_going_actually_going_trick_or_treating_yourself,
+        bonkers_the_candy = bonkers,
+        boxo_raisins = box_o_raisins,
+        hersheys_dark_chocolate = dark_chocolate_hershey,
+        hersheys_kisses = hershey_s_kissables,
+        licorice_yes_black = licorice,
+        sweetums_a_friend_to_diabetes = sweetums
+      )
+
+## Combine Tables
+
+The final step before combining the three tables was to add in another column for the year, pre-populated with the correct value. This would allow analysis by year to be undertaken if necessary.
+
+    candy_2017['year']=2017
+    candy_2017 <- candy_2017[, c(109,1:108)]
+    candy_2016['year']=2016
+    candy_2016 <- candy_2016[, c(106,1:105)]
+    candy_2015['year']=2015
+    candy_2015 <- candy_2015[, c(96,1:95)]
+
+Bind rows was used to bring the three tables into one place.
+
+    combined <- bind_rows(candy_2017, candy_2016, candy_2015)
+
+## Clean Age Column
+
+The age column needs to be cleaned as it contains some character and double values. This was done by mutating the value using ifelse. If the value was over 100 it was assumed the value was incorrect and coded with NA.
+
+    combined$age <- as.integer(combined$age)
+
+    combined <- combined %>% 
+      mutate(age = ifelse(age <= 100, age, NA_integer_))
+
+## Cleaning the Country Data
+
+Perhaps the hardest part of this task was to clean the country code column.
+
+In the end I built a set of patterns to be used to clean the USA, UK, Canada and other data values. They can be seen in the main code as the USA one especially is very long. The UK one is much simpler and looks like this:
+
+    uk_pattern <- c("endland|england|united kindom|united kingdom|uk|u.k.|scotland")
+
+The country code was changed to lower case to make it easier to interrogate. The patterns were then run against the data where some other anomalies were picked up and treated individually - for example 'australia' and 'austria' both contain the string 'us' so needed to be changed to other *before* the USA code was run.
+
+    combined<- combined %>%
+      mutate(country = str_to_lower(country)) 
+
+    combined <- combined %>% 
+      mutate(country = case_when(
+        str_detect(country, "not[\\s]{1,}") ~ NA_character_,
+        str_detect(country, "australia") ~ "other",
+        str_detect(country, "soviet canuckistan") ~ "other",   
+        str_detect(country, "austria") ~ "other",
+        str_detect(country, str_c(usa_pattern, collapse = "|")) ~ "usa",
+        str_detect(country, str_c(uk_pattern, collapse = "|")) ~ "uk",
+        str_detect(country, "^can") ~ "canada",
+        is.na(country) == TRUE ~ NA_character_,
+        TRUE ~ "other")
+      )
+
+## Export to .csv
+
+The file was exported to a csv file in the clean_data folder.
+
+    write_csv(combined, here("clean_data/candy_data.csv"))
+
+# Question Answers
+
+## Question One
+
+**What is the total number of candy ratings given across the three years.**
+
+*(number of candy ratings, not number of raters. Don't count missing values)*
+
+For this question the very wide candy response table needed to be pivoted and the missing values dropped.
+
+    candy_pivot <- candy_data %>%
+      pivot_longer(cols = "100_grand_bar":"peanut_butter_jars",
+                names_to = "candy",
+                values_to = "rating",
+                values_drop_na = TRUE
+                )
+
+Using the pivoted table I then grouped by the year and the rating to give a table.
+
+    rating_count <- candy_pivot %>%
+      group_by(year, rating) %>% 
+      summarise(
+        n = n()
+      )  
+
+I realised I had gone into too much detail and found out the number of ratings by year **and** by response.
+
+| Despair |  Joy   |  Meh  |   Total    |
+|:-------:|:------:|:-----:|:----------:|
+| 270661  | 197849 |   0   |   468510   |
+|  39001  | 41889  | 37400 |   118290   |
+|  58254  | 64206  | 53095 |   175555   |
+| 367916  | 303944 | 90495 | **762355** |
+
+: Number of ratings by year and response
+
+In answer to the original question there were 762,355 responses (not including the missing values).
+
+## Question Two
+
+**What was the average age of people who are going out trick or treating and the average age of people not going trick or treating?**
+
+I created a new table so that I could delete the missing values without damaging the master table. This was then grouped by the response to 'Are you going out for Hallowe'en?' and the mean age was taken.
+
+Annoyingly there is still an NA average coming up and I am not sure why.
+
+    age_table <- candy_data 
+    age_table <- drop_na(age_table,age) %>% 
+      filter(age > 0)
+
+    age_table %>%
+      group_by(going_out) %>%
+      summarise(average_age = mean(age)) 
+
++--------------------+----------+
+| Are you going out\ | Average\ |
+| for Hallowe'en?    | Age      |
++====================+==========+
+| No                 | 39.13550 |
++--------------------+----------+
+| Yes                | 35.01952 |
++--------------------+----------+
+| na                 | 42.30120 |
++--------------------+----------+
+
+: Average age of people going trick or treating (or staying home)
+
+The average age of people going out for Hallowe'en is 35 and not going out is 39.
+
+## Question Three
+
+**For each of joy, despair and meh, which candy bar received the most of these ratings?**
+
+    candy_count <- candy_pivot %>%
+      group_by(candy, rating) %>% 
+      summarise(
+        n = n(),.groups = "drop"
+      )  
+
+The data was pivoted and then grouped by to count the candy bar ratings. This was then pivoted back again to show the numbers for each rating type. This new table was then interrogated using slice_max to find the bars with the highest ratings in each of joy, depair and meh.
+
+-   The candy bar that has received the most 'despair' ratings is the broken glow stick with 7905 ratings.
+
+-   The candy bar that has received the most 'joy' ratings is any full sized candy bar with 7589 ratings.
+
+-   The candy bar that has received the most 'meh' ratings is lollipops with 1570 ratings.
+
+## Question Four
+
+**How many people rated Starburst as despair?**
+
+A nice easy question. There were 1990 'despair' rating for Starburst.
+
+    candy_ratings %>% 
+      filter(candy == "starburst") %>% 
+      select("DESPAIR")
+
+## Question Five
+
+Not really a question - but we have been asked to associate values to the responses. Count despair as -1, joy as +1 and meh as 0.
+
+    candy_pivot <- candy_pivot %>% 
+      mutate(rating_value = case_when(
+         (rating == "DESPAIR") ~ -1,
+         (rating == "JOY") ~ 1,
+         (rating == "MEH") ~ 0
+      ))
+
+## Question Six
+
+**What was the most popular candy bar by this rating system for each gender in the dataset?**
+
+The top candy bar for both males and females is any full sized candy bar.
+
+    # Repearted for Male and Female
+    candy_pivot %>% 
+      filter(gender == "Male") %>% 
+      group_by(candy) %>% 
+      summarise(rating_total = sum(rating_value)) %>% 
+      arrange(desc(rating_total))
+
+## Question Seven
+
+**What was the most popular candy bar in each year?**
+
+    # Repeated for each year
+    candy_pivot %>% 
+      filter(year == 2015) %>% 
+      group_by(candy) %>% 
+      summarise(rating_total = sum(rating_value)) %>% 
+      arrange(desc(rating_total))
+
+Well surprise, surprise - the most popular candy bar in 2015, 2016 and 2017 is any full sized candy bar
+
+## Question Eight
+
+**What was the most popular candy bar by this rating for people in US, Canada, UK and all other countries?**
+
+    # Repeated for each country (or other)
+    candy_pivot %>% 
+      filter(country == "usa") %>% 
+      group_by(candy) %>% 
+      summarise(rating_total = sum(rating_value)) %>% 
+      arrange(desc(rating_total))
+
+So, again, the large candy bars are the favourite - except in the UK where hard case seems to be the preferred treat - not very tasty...
+
+# Additional Comments
+
+Phew - well this task has taken a lot of time. A large amount of it was trying to solve the country code problems. The solution, in the end, was not particularly elegant and I am not that happy with it.
+
+I read a couple of people's comments on the analysis of this data and it is problematic data. Surveys like this cause their own problems when they allow the responders to fill in their own answers instead of forcing an answer with radio buttons or drop down lists.
+
+I am sure there is a lot more to be gained from this dataset but as it is a badly populated and largely American piece of work I am not that interested. Now, where were those seabirds again?

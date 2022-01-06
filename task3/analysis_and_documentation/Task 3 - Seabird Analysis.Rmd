@@ -179,29 +179,18 @@ This gave me a list of 70 observations and I could see that all of the species c
       summarise(COUNT = sum(COUNT)) %>% 
       arrange(desc(COUNT))
 
-+--------------------------------+-------------+
-| Penguin Species                | Count       |
-+================================+:===========:+
-| Adelie penguin                 | 22          |
-+--------------------------------+-------------+
-| Adelie penguin SUBAD           | 5           |
-+--------------------------------+-------------+
-| Crested penguin (unidentified) | 1           |
-+--------------------------------+-------------+
-| Emperor penguin                | 10          |
-+--------------------------------+-------------+
-| Emperor penguin AD             | 8           |
-+--------------------------------+-------------+
-| Fiordland crested penguin      | 15          |
-+--------------------------------+-------------+
-| Little penguin                 | 90          |
-+--------------------------------+-------------+
-| Yellow-eyed penguin            | 3           |
-+--------------------------------+-------------+
-|                                |             |
-+--------------------------------+-------------+
-| TOTAL                          | 154         |
-+--------------------------------+-------------+
+| Penguin Species                | Count |
+|--------------------------------|:-----:|
+| Adelie penguin                 |  22   |
+| Adelie penguin SUBAD           |   5   |
+| Crested penguin (unidentified) |   1   |
+| Emperor penguin                |  10   |
+| Emperor penguin AD             |   8   |
+| Fiordland crested penguin      |  15   |
+| Little penguin                 |  90   |
+| Yellow-eyed penguin            |   3   |
+|                                |       |
+| TOTAL                          |  154  |
 
 In total 154 penguins.
 
