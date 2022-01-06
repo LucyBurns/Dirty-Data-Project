@@ -1,0 +1,214 @@
+---
+title: "Task 3 - Seabird"
+author: "Lucy Burns"
+date: "06/01/2022"
+output: 
+  html_document:
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction to the Dataset
+
+We are told very little about the seabird data so I did a little searching around for my own curiosity.
+
+## Data Source
+
+[More information on the seabird dataset](https://www.tepapa.govt.nz/learn/research/datasets/sea-observations-seabirds-dataset)
+
+> The data was recorded using guidelines for the Australasian Seabird Mapping Scheme and counts seabirds seen from a ship during a 10 minute period. The data includes geolocations of the sightings, bird species, numbers and behaviour, observer and ship name, and observation date and time.
+>
+> It has been built from data elements extracted by Te Papa staff from the at-sea bird observations recorded in the logbooks of Captain John Arthur Francis Jenkins (1928-1989) and count cards held by the convenor of the Australasian Seabird Mapping Scheme.
+>
+> The logbooks of Captain Jenkins are held by the Archives of the Auckland War Memorial Museum.
+
+I found this helpful, especially when considering the question about the site of the bird sightings.
+
+## Initial Glimpse of the spreadsheet
+
+The data itself is held in a single spreadsheet comprising of four sheets:
+
+1.  Ship data by record ID
+
+2.  Bird data by record ID
+
+3.  Ship data codes
+
+4.  Bird data codes
+
+# Assumptions Made
+
+Looking at the original notes and the spreadsheet before importing I could get a taste of what the data involves. The data looks fairly clean and the main task is to match up the two data sets.
+
+The code sheets contain a description of the data fields which is useful to determine how to interrogate the data.
+
+# Cleaning and Importing Data
+
+## Importing Libraries
+
+As with most projects a number of libraries/packages need to be accessed. For this task I installed tidyverse (useful for analysis), janitor (useful for cleaning), readxl (as the main dataset is held in excel) and here (to allow the repo to work outside of my local network.
+
+    library(tidyverse)
+    library(janitor)
+    library(readxl)
+    library(here)
+
+## Locating the data
+
+The here package allowed the data to be located in a reproducible location.
+
+## Excel Sheets
+
+Before importing I had a look at the sheets on the spreadsheet to see if they matched my expectations and to confirm which to import.
+
+    excel_sheets(here("raw_data/seabirds.xls"))
+
+I imported two of the sheets containing the ship data and the bird data. The last two sheets were not suitable for analysis, instead they contain some descriptions of the codes and data used in the first two sheets. I printed these off for reference.
+
+    ship_data <- 
+      read_excel(here("raw_data/seabirds.xls"), sheet = 1)
+
+    bird_data <- 
+      read_excel(here("raw_data/seabirds.xls"), sheet = 2)
+
+## Tidy up Column Names
+
+The column names in the bird data were a bit long-winded especially:
+
+-   Species common name (taxon \[AGE / SEX / PLUMAGE PHASE\])
+
+-   Species scientific name (taxon \[AGE /SEX / PLUMAGE PHASE\])
+
+-   Species abbreviation
+
+To overcome this I renamed them to 'Species', 'Scientific Name' and 'Abbreviation' respectively.
+
+    colnames(bird_data)[3]  <- "Species"
+    colnames(bird_data)[4]  <- "Scientific Name"
+    colnames(bird_data)[5]  <- "Abbreviation"
+
+## Join Tables
+
+The tables needed to be joined up and this was a simple process. The bird table is the main data table with 49019 observations. I needed to append the ship data onto this using a left join. This left me with the 49019 records and now the ship data is easily accessible too.
+
+    full_data <- left_join(bird_data, ship_data, by = "RECORD ID")
+
+## Export to .csv
+
+The file was exported to a csv file in the clean_data folder
+
+    write_csv(full_data, here("clean_data/full_data.csv"))
+
+# Question Answers
+
+## Question One
+
+**Which bird had the most individual sightings?**
+
+This was a simple group_by
+
+    Birds_by_species <- clean_data %>% 
+      group_by(species, scientific_name, abbreviation) %>% 
+      summarise(n = n()) %>% 
+      arrange(desc(n))
+
+The bird with the most sightings is the Wandering albatross sensu lato PL2 (Diomedea antipodensis / exulans PL2, DIOANTEXU PL2) There were 3104 sightings.
+
+## Question Two
+
+**Which bird had the highest total count?**
+
+This question took me a little while to work out. I was getting the bird observations mixed up with the counts. Once I realise that there was a count field which told me *how many* birds were in each sighting it was an easy sum to run.
+
+    clean_data %>% 
+      group_by(species, scientific_name, abbreviation) %>% 
+      summarise(COUNT = sum(COUNT)) %>% 
+      arrange(desc(COUNT))
+
+The bird with the highest total count is the black-billed gull (larus bulleri, larbul) with 7732 birds counted
+
+## Question Three
+
+**Which bird had the highest total count above a latitude of -30?**
+
+Using the full data set I could easily find the answer out to this question pulling on the location data from the ship file. I had to think carefully about what this question was actually referring to and my initial analysis of the source of the dataset came in really handy.
+
+The data is all taken from the southern hemisphere and this question is looking for sightings above -30 degrees.
+
+    clean_data %>% 
+      filter(LAT > -30) %>% 
+      group_by(species, scientifc_name, abbreviation) %>% 
+      summarise(COUNT = sum(COUNT)) %>% 
+      arrange(desc(COUNT))
+
+The bird with the highest total count above a latitude of -30 is the wedge-tailed shearwater (puffinus pacificus, pufpac) - with a count of 855.
+
+## Question Four
+
+**How many different types of birds were only ever seen in groups of 1?**
+
+This question was more straightforward than I thought it was. Initially I made it a lot more complicated and was trying all sorts of things.
+
+Then I just sat back and thought about it and realised I simply need to group_by the bird species and determine the mean of the count. If the mean is 1.0 this means that every time the bird(s) were seen they were on their own. This code created a table of these birds:
+
+    average_bird_count <- clean_data %>% 
+      drop_na(COUNT) %>%
+      group_by(species, scientific_name, abbreviation) %>% 
+      summarise_at(vars(COUNT), list(average_count = mean)) %>% 
+      filter(average_count ==  1)
+
+86 different species of birds were seen on their own.
+
+## Question Five
+
+**How many penguins were seen?**
+
+*(Hint: there are many types of penguin)*
+
+Initially for this question I did a search using 'enguin' just to see what came up.
+
+    penguins <- clean_data [grep("enguin", clean_data$Species), ]
+
+This gave me a list of 70 observations and I could see that all of the species contain the word 'penguin' or 'Penguin'. I used this table to then group by the different species and count how many of each penguin species were observed.
+
+    penguins  %>% 
+      group_by(Species) %>% 
+      summarise(COUNT = sum(COUNT)) %>% 
+      arrange(desc(COUNT))
+
++--------------------------------+-------------+
+| Penguin Species                | Count       |
++================================+:===========:+
+| Adelie penguin                 | 22          |
++--------------------------------+-------------+
+| Adelie penguin SUBAD           | 5           |
++--------------------------------+-------------+
+| Crested penguin (unidentified) | 1           |
++--------------------------------+-------------+
+| Emperor penguin                | 10          |
++--------------------------------+-------------+
+| Emperor penguin AD             | 8           |
++--------------------------------+-------------+
+| Fiordland crested penguin      | 15          |
++--------------------------------+-------------+
+| Little penguin                 | 90          |
++--------------------------------+-------------+
+| Yellow-eyed penguin            | 3           |
++--------------------------------+-------------+
+|                                |             |
++--------------------------------+-------------+
+| TOTAL                          | 154         |
++--------------------------------+-------------+
+
+In total 154 penguins.
+
+# Additional Comments
+
+One thing I learned from this analysis is to read the question properly. I wasted a lot of time trying to find things out that were not asked for.
+
+For example, for some reason, in question 5, I thought I was looking for puffins, not penguins. When I could not find any I got really confused. I then realised my mistake along with the fact that puffins are not found in the Southern Hemisphere (except in the film 'Happy Feet 2').
+
+If I had more time I would like to look at this data in more detail. Perhaps even mapping the sightings.

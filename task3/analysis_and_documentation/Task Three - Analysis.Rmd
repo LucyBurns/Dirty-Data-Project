@@ -1,10 +1,27 @@
 ---
 title: "R Notebook"
-output: html_notebook
-editor_options: 
-  markdown: 
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
     wrap: sentence
 ---
+
+# Import Library
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(here)
+```
+
+#Import Data
+
+```{r}
+clean_data <- read_csv(here("clean_data/full_data.csv"))
+```
 
 # Analysis questions
 
@@ -15,8 +32,8 @@ For each question where we ask for bird names, give the bird's common name, scie
 Which bird had the most individual sightings?
 
 ```{r}
-Birds_by_species <- bird_data %>% 
-  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+Birds_by_species <- clean_data %>% 
+  group_by(species, scientific_name, abbreviation) %>% 
   summarise(n = n()) %>% 
   arrange(desc(n))
 ```
@@ -28,8 +45,8 @@ The bird with the most sightings is the Wandering albatross sensu lato PL2 (Diom
 Which bird had the highest total count?
 
 ```{r}
-bird_data %>% 
-  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+clean_data %>% 
+  group_by(species, scientific_name, abbreviation) %>% 
   summarise(COUNT = sum(COUNT)) %>% 
   arrange(desc(COUNT))
 ```
@@ -42,9 +59,9 @@ Which bird had the highest total count above a latitude of -30?
 
 ```{r}
 # I would assume that above a latitude of -30 is where x > -30
-full_data %>% 
+clean_data %>% 
   filter(LAT > -30) %>% 
-  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+  group_by(species, scientific_name, abbreviation) %>% 
   summarise(COUNT = sum(COUNT)) %>% 
   arrange(desc(COUNT))
 ```
@@ -56,15 +73,15 @@ The bird with the highest total count above a latitude of -30 is the wedge-taile
 How many different types of birds were only ever seen in groups of 1?
 
 ```{r}
-# Filter by birds observed on their own
-full_data %>% 
-  filter(COUNT == 1) %>% 
-  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
-  summarise(n = n()) %>% 
-  arrange(desc(n))
+# Find the average count by species
+average_bird_count <- clean_data %>% 
+  drop_na(COUNT) %>%
+  group_by(species, scientific_name, abbreviation) %>% 
+  summarise_at(vars(COUNT), list(average_count = mean)) %>% 
+  filter(average_count ==  1)
 ```
 
-298 different types of birds were seen on their own.
+86 different species of birds were seen on their own.
 
 ## Question Five
 
@@ -73,40 +90,40 @@ How many penguins were seen?
 
 ```{r}
 # Find the penguin species
-penguins <- full_data [grep("peng", full_data$Species), ]
+penguins <- clean_data [grep("enguin", clean_data$species), ]
 ```
 
 ```{r}
 # Count the penguins!
-penguins <- drop_na(penguins,COUNT) %>% 
-  group_by(Species) %>% 
+penguins  %>% 
+  group_by(species) %>% 
   summarise(COUNT = sum(COUNT)) %>% 
   arrange(desc(COUNT))
 ```
 
-+--------------------------------+-----------+
-| Penguin Species                | Count     |
-+================================+:=========:+
-| Adelie penguin                 | 22        |
-+--------------------------------+-----------+
-| Adelie penguin SUBAD           | 5         |
-+--------------------------------+-----------+
-| Crested penguin (unidentified) | 1         |
-+--------------------------------+-----------+
-| Emperor penguin                | 10        |
-+--------------------------------+-----------+
-| Emperor penguin AD             | 8         |
-+--------------------------------+-----------+
-| Fiordland crested penguin      | 15        |
-+--------------------------------+-----------+
-| Little penguin                 | 90        |
-+--------------------------------+-----------+
-| Yellow-eyed penguin            | 3         |
-+--------------------------------+-----------+
-|                                |           |
-+--------------------------------+-----------+
-| TOTAL                          | 154       |
-+--------------------------------+-----------+
++--------------------------------+-------------+
+| Penguin Species                | Count       |
++================================+:===========:+
+| Adelie penguin                 | 22          |
++--------------------------------+-------------+
+| Adelie penguin SUBAD           | 5           |
++--------------------------------+-------------+
+| Crested penguin (unidentified) | 1           |
++--------------------------------+-------------+
+| Emperor penguin                | 10          |
++--------------------------------+-------------+
+| Emperor penguin AD             | 8           |
++--------------------------------+-------------+
+| Fiordland crested penguin      | 15          |
++--------------------------------+-------------+
+| Little penguin                 | 90          |
++--------------------------------+-------------+
+| Yellow-eyed penguin            | 3           |
++--------------------------------+-------------+
+|                                |             |
++--------------------------------+-------------+
+| TOTAL                          | 154         |
++--------------------------------+-------------+
 
 : Penguin Count
 

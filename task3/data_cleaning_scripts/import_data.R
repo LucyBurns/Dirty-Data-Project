@@ -1,64 +1,40 @@
----
-title: "Task 3: Seabirds"
-output:
-  html_document: 
-    number_sections: yes
-    toc: yes
-    df_print: paged
-    toc_float: yes
-editor_options: 
-  markdown: 
-    wrap: 80
----
-
 # Import Libraries
-
-```{r}
+  
 library(tidyverse)
 library(janitor)
 library(readxl)
 library(here)
-```
+
 
 # Excel Spreadsheet Import
-
 ## Look at the sheets
 
-```{r}
 # Identify the sheets in the spreadsheet
 excel_sheets(here("raw_data/seabirds.xls"))
-```
 
 ## Import required sheets
 
-```{r}
 ship_data <- 
   read_excel(here("raw_data/seabirds.xls"), 
-                  sheet = 1)
+             sheet = 1)
 
 bird_data <- 
   read_excel(here("raw_data/seabirds.xls"), 
-                  sheet = 2)
-```
+             sheet = 2)
 
 ## Rename columns
-
-```{r}
 colnames(bird_data)[3]  <- "species"
 colnames(bird_data)[4]  <- "scientific_name"
 colnames(bird_data)[5]  <- "abbreviation"
-```
+
 
 ## Create one table
 
-```{r}
 # Create one table using left_join
 full_data <- left_join(bird_data, ship_data, by = "RECORD ID")
-```
 
 ## Export to csv file
 
-```{r}
 write_csv(full_data, here("clean_data/full_data.csv"))
-```
+
 
