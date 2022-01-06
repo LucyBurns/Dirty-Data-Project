@@ -201,3 +201,21 @@ country_codes_regrouped <- country_codes %>%
     n = n()
   )
 ```
+
+```{r}
+candy_ratings %>% ungroup() %>% 
+  slice_max(MEH)
+```
+
+```{r}
+# Using the candy_ratings table find the top for each rating type
+candy_ratings[candy_ratings$DESPAIR == max(candy_ratings$DESPAIR),] 
+candy_ratings[candy_ratings$JOY == max(candy_ratings$JOY),] 
+candy_ratings[candy_ratings$MEH == max(candy_ratings$MEH),]
+```
+
+```{r}
+# Using the candy_ratings table find the top for each rating type
+candy_ratings<- drop_na(candy_ratings,MEH) %>% 
+candy_ratings[candy_ratings$MEH == max(candy_ratings$MEH),]
+```

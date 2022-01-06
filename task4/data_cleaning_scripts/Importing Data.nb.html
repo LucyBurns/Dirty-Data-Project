@@ -239,6 +239,10 @@ rawdata_2016 &lt;- read_excel (&quot;../raw_data/boing-boing-candy-2016.xlsx&quo
 rawdata_2017 &lt;- read_excel (&quot;../raw_data/boing-boing-candy-2017.xlsx&quot;)%&gt;% 
   clean_names()</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTmV3IG5hbWVzOlxuKiBgYCAtPiAuLi4xMTRcbiJ9 -->
+<pre><code>New names:
+* `` -&gt; ...114</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -339,12 +343,17 @@ combined &lt;- bind_rows(candy_2017, candy_2016, candy_2015)</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbiB0aGUgYWdlIGNvbHVtblxuIyBDaGFuZ2UgdGhlIGRhdGEgdHlwZSB0byBpbnRlZ2VyXG5jb21iaW5lZCRhZ2UgPC0gYXMuaW50ZWdlcihjb21iaW5lZCRhZ2UpXG5cbmNvbWJpbmVkIDwtIGNvbWJpbmVkICU+JSBcbiAgbXV0YXRlKGFnZSA9IGlmZWxzZShhZ2UgPD0gMTAwLCBhZ2UsIE5BX2ludGVnZXJfKSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbiB0aGUgYWdlIGNvbHVtblxuIyBDaGFuZ2UgdGhlIGRhdGEgdHlwZSB0byBpbnRlZ2VyXG5jb21iaW5lZCRhZ2UgPC0gYXMuaW50ZWdlcihjb21iaW5lZCRhZ2UpXG5gYGAifQ== -->
 <pre class="r"><code># Clean the age column
 # Change the data type to integer
-combined$age &lt;- as.integer(combined$age)
-
-combined &lt;- combined %&gt;% 
+combined$age &lt;- as.integer(combined$age)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogTkFzIGludHJvZHVjZWQgYnkgY29lcmNpb25cbldhcm5pbmc6IE5BcyBpbnRyb2R1Y2VkIGJ5IGNvZXJjaW9uIHRvIGludGVnZXIgcmFuZ2VcbiJ9 -->
+<pre><code>Warning: NAs introduced by coercion
+Warning: NAs introduced by coercion to integer range</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29tYmluZWQgPC0gY29tYmluZWQgJT4lIFxuICBtdXRhdGUoYWdlID0gaWZlbHNlKGFnZSA8PSAxMDAsIGFnZSwgTkFfaW50ZWdlcl8pKVxuYGBgIn0= -->
+<pre class="r"><code>combined &lt;- combined %&gt;% 
   mutate(age = ifelse(age &lt;= 100, age, NA_integer_))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -389,12 +398,12 @@ usaa.|usaa.|usad|usasa|new york|new jersey|murrika|the yoo ess of aaayyyyyy&quot
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDaGFuZ2UgdGhlIGNvZGVzIGluIHRoZSB0ZXN0IGNvdW50cnlfY29kZSB0YWJsZVxuY291bnRyeV9jb2RlcyA8LSBjb3VudHJ5X2NvZGVzICU+JSBcbiAgbXV0YXRlKGNvdW50cnkyID0gY2FzZV93aGVuKFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJub3RbXFxcXHNdezEsfVwiKSB+IE5BX2NoYXJhY3Rlcl8sXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcImF1c3RyYWxpYVwiKSB+IFwib3pcIixcbiAgICBzdHJfZGV0ZWN0KGNvdW50cnksIFwic292aWV0IGNhbnVja2lzdGFuXCIpIH4gXCJvdGhlclwiLCAgIFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJhdXN0cmlhXCIpIH4gXCJvdGhlclwiLFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gXCJ8XCIpKSB+IFwidXNhXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBzdHJfYyh1a19wYXR0ZXJuLCBjb2xsYXBzZSA9IFwifFwiKSkgfiBcInVrXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcIl5jYW5cIikgfiBcImNhbmFkYVwiLFxuICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLFxuICAgIFRSVUUgfiBcIm90aGVyXCIpXG4gIClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDaGFuZ2UgdGhlIGNvZGVzIGluIHRoZSB0ZXN0IGNvdW50cnlfY29kZSB0YWJsZVxuY291bnRyeV9jb2RlcyA8LSBjb3VudHJ5X2NvZGVzICU+JSBcbiAgbXV0YXRlKGNvdW50cnkyID0gY2FzZV93aGVuKFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJub3RbXFxcXHNdezEsfVwiKSB+IE5BX2NoYXJhY3Rlcl8sXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcImF1c3RyYWxpYVwiKSB+IFwib3RoZXJcIixcbiAgICBzdHJfZGV0ZWN0KGNvdW50cnksIFwic292aWV0IGNhbnVja2lzdGFuXCIpIH4gXCJvdGhlclwiLCAgIFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJhdXN0cmlhXCIpIH4gXCJvdGhlclwiLFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gXCJ8XCIpKSB+IFwidXNhXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBzdHJfYyh1a19wYXR0ZXJuLCBjb2xsYXBzZSA9IFwifFwiKSkgfiBcInVrXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcIl5jYW5cIikgfiBcImNhbmFkYVwiLFxuICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLFxuICAgIFRSVUUgfiBcIm90aGVyXCIpXG4gIClcbmBgYCJ9 -->
 <pre class="r"><code># Change the codes in the test country_code table
 country_codes &lt;- country_codes %&gt;% 
   mutate(country2 = case_when(
     str_detect(country, &quot;not[\\s]{1,}&quot;) ~ NA_character_,
-    str_detect(country, &quot;australia&quot;) ~ &quot;oz&quot;,
+    str_detect(country, &quot;australia&quot;) ~ &quot;other&quot;,
     str_detect(country, &quot;soviet canuckistan&quot;) ~ &quot;other&quot;,   
     str_detect(country, &quot;austria&quot;) ~ &quot;other&quot;,
     str_detect(country, str_c(usa_pattern, collapse = &quot;|&quot;)) ~ &quot;usa&quot;,
@@ -408,21 +417,18 @@ country_codes &lt;- country_codes %&gt;%
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJbiB0aGUgY29tYmluZWQgdGFibGUgXG4jICAgICBjaGFuZ2UgdGhlIGNvdW50cnkgY29kZSB0byBsb3dlciBjYXNlXG4jICAgICB1c2luZyB0aGUgcGF0dGVybnMgcmVwbGFjZSB0aGUgdWsgYW5kIHVzYSBmaWVsZHNcbiMgICAgIHB1dCB0aGlzIG5ldyBjb2RlIGludG8gYSBuZXcgY29sdW1uIGNhbGxlZCBjbGVhbl9jb3VudHJ5XG4jICAgICBjcmVhdGUgYSBuZXcgdGFibGUgd2l0aCBjb2x1bW5zIGluIHRoZSBjb3JyZWN0IG9yZGVyXG5cbmNvbWJpbmVkPC0gY29tYmluZWQgJT4lXG4gIG11dGF0ZShjb3VudHJ5ID0gc3RyX3RvX2xvd2VyKGNvdW50cnkpKSBcblxuXG5jb21iaW5lZCA8LSBjb21iaW5lZCAlPiUgXG4gIG11dGF0ZShjb3VudHJ5ID0gY2FzZV93aGVuKFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJub3RbXFxcXHNdezEsfVwiKSB+IE5BX2NoYXJhY3Rlcl8sXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcImF1c3RyYWxpYVwiKSB+IFwib3pcIixcbiAgICBzdHJfZGV0ZWN0KGNvdW50cnksIFwic292aWV0IGNhbnVja2lzdGFuXCIpIH4gXCJvdGhlclwiLCAgIFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJhdXN0cmlhXCIpIH4gXCJvdGhlclwiLFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gXCJ8XCIpKSB+IFwidXNhXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBzdHJfYyh1a19wYXR0ZXJuLCBjb2xsYXBzZSA9IFwifFwiKSkgfiBcInVrXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcIl5jYW5cIikgfiBcImNhbmFkYVwiLFxuICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLFxuICAgIFRSVUUgfiBcIm90aGVyXCIpXG4gIClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJbiB0aGUgY29tYmluZWQgdGFibGUgXG4jICAgICBjaGFuZ2UgdGhlIGNvdW50cnkgY29kZSB0byBsb3dlciBjYXNlXG4jICAgICB1c2luZyB0aGUgcGF0dGVybnMgcmVwbGFjZSB0aGUgdWsgYW5kIHVzYSBmaWVsZHNcblxuY29tYmluZWQ8LSBjb21iaW5lZCAlPiVcbiAgbXV0YXRlKGNvdW50cnkgPSBzdHJfdG9fbG93ZXIoY291bnRyeSkpIFxuXG5jb21iaW5lZCA8LSBjb21iaW5lZCAlPiUgXG4gIG11dGF0ZShjb3VudHJ5ID0gY2FzZV93aGVuKFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJub3RbXFxcXHNdezEsfVwiKSB+IE5BX2NoYXJhY3Rlcl8sXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcImF1c3RyYWxpYVwiKSB+IFwib3RoZXJcIixcbiAgICBzdHJfZGV0ZWN0KGNvdW50cnksIFwic292aWV0IGNhbnVja2lzdGFuXCIpIH4gXCJvdGhlclwiLCAgIFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgXCJhdXN0cmlhXCIpIH4gXCJvdGhlclwiLFxuICAgIHN0cl9kZXRlY3QoY291bnRyeSwgc3RyX2ModXNhX3BhdHRlcm4sIGNvbGxhcHNlID0gXCJ8XCIpKSB+IFwidXNhXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBzdHJfYyh1a19wYXR0ZXJuLCBjb2xsYXBzZSA9IFwifFwiKSkgfiBcInVrXCIsXG4gICAgc3RyX2RldGVjdChjb3VudHJ5LCBcIl5jYW5cIikgfiBcImNhbmFkYVwiLFxuICAgIGlzLm5hKGNvdW50cnkpID09IFRSVUUgfiBOQV9jaGFyYWN0ZXJfLFxuICAgIFRSVUUgfiBcIm90aGVyXCIpXG4gIClcbmBgYCJ9 -->
 <pre class="r"><code># In the combined table 
 #     change the country code to lower case
 #     using the patterns replace the uk and usa fields
-#     put this new code into a new column called clean_country
-#     create a new table with columns in the correct order
 
 combined&lt;- combined %&gt;%
   mutate(country = str_to_lower(country)) 
 
-
 combined &lt;- combined %&gt;% 
   mutate(country = case_when(
     str_detect(country, &quot;not[\\s]{1,}&quot;) ~ NA_character_,
-    str_detect(country, &quot;australia&quot;) ~ &quot;oz&quot;,
+    str_detect(country, &quot;australia&quot;) ~ &quot;other&quot;,
     str_detect(country, &quot;soviet canuckistan&quot;) ~ &quot;other&quot;,   
     str_detect(country, &quot;austria&quot;) ~ &quot;other&quot;,
     str_detect(country, str_c(usa_pattern, collapse = &quot;|&quot;)) ~ &quot;usa&quot;,

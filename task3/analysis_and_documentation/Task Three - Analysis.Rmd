@@ -6,7 +6,7 @@ editor_options:
     wrap: sentence
 ---
 
-# Analysis questions 
+# Analysis questions
 
 For each question where we ask for bird names, give the bird's common name, scientific name and species abbreviation.
 
@@ -14,19 +14,100 @@ For each question where we ask for bird names, give the bird's common name, scie
 
 Which bird had the most individual sightings?
 
+```{r}
+Birds_by_species <- bird_data %>% 
+  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n))
+```
+
+The bird with the most sightings is the Wandering albatross sensu lato PL2 (Diomedea antipodensis / exulans PL2, DIOANTEXU PL2) There were 3104 sightings.
+
 ## Question Two
 
 Which bird had the highest total count?
+
+```{r}
+bird_data %>% 
+  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+  summarise(COUNT = sum(COUNT)) %>% 
+  arrange(desc(COUNT))
+```
+
+The bird with the highest total count is the black-billed gull (larus bulleri, larbul) with 7732 birds counted
 
 ## Question Three
 
 Which bird had the highest total count above a latitude of -30?
 
+```{r}
+# I would assume that above a latitude of -30 is where x > -30
+full_data %>% 
+  filter(LAT > -30) %>% 
+  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+  summarise(COUNT = sum(COUNT)) %>% 
+  arrange(desc(COUNT))
+```
+
+The bird with the highest total count above a latitude of -30 is the wedge-taile shearwater (puffinus pacificus, pufpac) - with a count of 855.
+
 ## Question Four
 
 How many different types of birds were only ever seen in groups of 1?
+
+```{r}
+# Filter by birds observed on their own
+full_data %>% 
+  filter(COUNT == 1) %>% 
+  group_by(Species, `Scientifc Name`, Abbreviation) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n))
+```
+
+298 different types of birds were seen on their own.
 
 ## Question Five
 
 How many penguins were seen?
 (Hint: there are many types of penguin)
+
+```{r}
+# Find the penguin species
+penguins <- full_data [grep("peng", full_data$Species), ]
+```
+
+```{r}
+# Count the penguins!
+penguins <- drop_na(penguins,COUNT) %>% 
+  group_by(Species) %>% 
+  summarise(COUNT = sum(COUNT)) %>% 
+  arrange(desc(COUNT))
+```
+
++--------------------------------+-----------+
+| Penguin Species                | Count     |
++================================+:=========:+
+| Adelie penguin                 | 22        |
++--------------------------------+-----------+
+| Adelie penguin SUBAD           | 5         |
++--------------------------------+-----------+
+| Crested penguin (unidentified) | 1         |
++--------------------------------+-----------+
+| Emperor penguin                | 10        |
++--------------------------------+-----------+
+| Emperor penguin AD             | 8         |
++--------------------------------+-----------+
+| Fiordland crested penguin      | 15        |
++--------------------------------+-----------+
+| Little penguin                 | 90        |
++--------------------------------+-----------+
+| Yellow-eyed penguin            | 3         |
++--------------------------------+-----------+
+|                                |           |
++--------------------------------+-----------+
+| TOTAL                          | 154       |
++--------------------------------+-----------+
+
+: Penguin Count
+
+In total there were 154 penguins seen.

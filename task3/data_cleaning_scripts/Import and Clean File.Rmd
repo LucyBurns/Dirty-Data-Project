@@ -7,16 +7,22 @@ output: html_notebook
 library(tidyverse)
 library(janitor)
 library(readxl)
+library(here)
 ```
 
 ```{r}
 # Identify the sheets in the spreadsheet
-excel_sheets("//Users/lucy/Documents/Documents - Barra/Codeclan/Dirty Data Project/Dirty-Data-Project/task3/raw_data/seabirds.xls")
+excel_sheets(here("raw_data/seabirds.xls"))
 ```
 
 ```{r}
-ship_data <- read_excel("//Users/lucy/Documents/Documents - Barra/Codeclan/Dirty Data Project/Dirty-Data-Project/task3/raw_data/seabirds.xls", sheet = "Ship data by record ID")
-bird_data <- read_excel("//Users/lucy/Documents/Documents - Barra/Codeclan/Dirty Data Project/Dirty-Data-Project/task3/raw_data/seabirds.xls", sheet = "Bird data by record ID")
+ship_data <- 
+  read_excel(here("raw_data/seabirds.xls"), 
+                  sheet = 1)
+
+bird_data <- 
+  read_excel(here("raw_data/seabirds.xls"), 
+                  sheet = 2)
 ```
 
 ```{r}
@@ -26,9 +32,10 @@ colnames(bird_data)[5]  <- "Abbreviation"
 ```
 
 ```{r}
-bird_data %>% 
-  group_by(Species)
-
+# Create one table using left_join
+full_data <- left_join(bird_data, ship_data, by = "RECORD ID")
 ```
+
+
 
 
