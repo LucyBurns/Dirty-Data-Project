@@ -78,9 +78,9 @@ I imported two of the sheets containing the ship data and the bird data. The las
 
 The column names in the bird data were a bit long-winded especially:
 
--   Species common name (taxon \[AGE / SEX / PLUMAGE PHASE\])
+-   Species common name (taxon {AGE / SEX / PLUMAGE PHASE})
 
--   Species scientific name (taxon \[AGE /SEX / PLUMAGE PHASE\])
+-   Species scientific name (taxon {AGE /SEX / PLUMAGE PHASE})
 
 -   Species abbreviation
 
@@ -115,7 +115,8 @@ This was a simple group_by
       summarise(n = n()) %>% 
       arrange(desc(n))
 
-The bird with the most sightings is the Wandering albatross sensu lato PL2 (Diomedea antipodensis / exulans PL2, DIOANTEXU PL2) There were 3104 sightings.
+**The bird with the most sightings is the Wandering albatross sensu lato PL2 (Diomedea antipodensis / exulans PL2, DIOANTEXU PL2) \
+There were 3104 sightings.**
 
 ## Question Two
 
@@ -128,7 +129,7 @@ This question took me a little while to work out. I was getting the bird observa
       summarise(COUNT = sum(COUNT)) %>% 
       arrange(desc(COUNT))
 
-The bird with the highest total count is the black-billed gull (larus bulleri, larbul) with 7732 birds counted
+**The bird with the highest total count is the black-billed gull (larus bulleri, larbul) with 7732 birds counted**
 
 ## Question Three
 
@@ -144,7 +145,7 @@ The data is all taken from the southern hemisphere and this question is looking 
       summarise(COUNT = sum(COUNT)) %>% 
       arrange(desc(COUNT))
 
-The bird with the highest total count above a latitude of -30 is the wedge-tailed shearwater (puffinus pacificus, pufpac) - with a count of 855.
+**The bird with the highest total count above a latitude of -30 is the wedge-tailed shearwater (puffinus pacificus, pufpac) - with a count of 855.**
 
 ## Question Four
 
@@ -160,7 +161,7 @@ Then I just sat back and thought about it and realised I simply need to group_by
       summarise_at(vars(COUNT), list(average_count = mean)) %>% 
       filter(average_count ==  1)
 
-86 different species of birds were seen on their own.
+**86 different species of birds were seen on their own.**
 
 ## Question Five
 
@@ -192,7 +193,7 @@ This gave me a list of 70 observations and I could see that all of the species c
 |                                |       |
 | TOTAL                          |  154  |
 
-In total 154 penguins.
+**In total 154 penguins.**
 
 # Additional Comments
 

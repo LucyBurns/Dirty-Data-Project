@@ -1,0 +1,113 @@
+---
+title: "Documentation: task1_decathlon"
+output:
+  html_document: 
+    number_sections: no
+    toc: yes
+    df_print: paged
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+By Tom Wightman
+
+# Introduction
+
+The data set `decathlon.rds` contains what appears to be the results of two decathlon competitions "Decastar" and "OlympicG" with 13 and 28 competitors respectively. Some of these competitors have competed in both decathlon events.
+
+The word Decathlon is broken down into *deca* meaning ten, and *athlon* meaning contest or prize. It is run over the course of two days.
+
+Traditionally decathlons, which has been developed from the ancient Greek Olympics event pentathlon, have two running orders of events to accommodate the differences in male and female events. These differences include lighter shot, discus and javelin weights and lower hurdles over 100 m rather than 110 m distance. Scheduling is also different to enable both competitions to run simultaneously.
+
+Day 1
+
+    100 metres
+    Long jump
+    Shot put
+    High jump
+    400 metres
+
+Day 2
+
+    110 metres hurdles
+    Discus throw
+    Pole vault
+    Javelin throw
+    1500 metres
+
+Although there are no days defined in the data set `decathlon.rds`, all the traditional events seem in place.
+
+More information about decathlons can be found [here](https://en.wikipedia.org/wiki/Decathlon).
+
+# Assumptions
+
+I made only one assumption in this small data set, which was the measurements of the events.
+
+Using prior knowledge and logical analysis I assumed that the events that included running distance were measured in seconds, and the events that required a competitors throwing either themselves or and object to be in meters.
+
+# Cleaning
+
+### Reading in the data
+
+I used packages `tidyverse` and `here` in order to read in the data. I also used the `janitor` package to simultaneously clean the variable names to make them more easily referenced.
+
+```{r, eval = FALSE}
+# cleaning variables
+decathlon <- janitor::clean_names(read_rds(here("raw_data/decathlon.rds")))
+```
+
+When investigating the data, I discovered that the names of the competitors had been used as row names instead of their own column.
+
+### Creating new column
+
+I used package `tibble` to turn the rows of names into one column, making my data more usable.
+
+I also standardised the names of the competitors for more accurate analysis.
+
+```{r, eval = FALSE}
+# creating name column for row names and standardising names
+decathlon <- decathlon %>% 
+  tibble::rownames_to_column("name") %>%
+  mutate(name = str_to_title(name))
+```
+
+# Analysis
+
+Below are the questions asked with responses.
+
+### Q1. Who had the longest long jump seen in the data?
+
+Clay has the longest long jump at 7.92 meters.
+
+### Q2. What was the average 100m time in each competition?
+
+-   Decastar - 11.12538 seconds
+-   OlympicG - 10.91571 seconds
+
+### Q3. Who had the highest total points across both competitions?
+
+Serble had the highest points for both competitions.
+
+-   Decastar - 8217\
+-   OlympicG - 8893
+
+### Q4. What was the shot-put scores for the top three competitors in each competition?
+
+-   Decastar: Yurkov - 15.19, Serble - 14.83, Karpov - 14.77\
+-   OlympicG: Sebrle - 16.36, Karpov - 15.93, Macey - 15.73
+
+### Q5. What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
+
+-   8120 was the average points for competitors who ran the 400m in less than 50 seconds.
+-   7727 was the average points for competitors who ran the 400m in more than 50 seconds.
+
+# Conclusions
+
+The data set itself is quite small, however there are some conclusions that can be drawn from it.
+
+Without knowing the time difference between competitions, I could not draw completely accurate conclusions however it may be said that OlympicG may have been the first competition in consecutive days? Or potentially there was a long time separating the competitions allowing for Serble to train even more and beat his previous scores from Decastar? This can be deduced from results in Q3. and Q4.
+
+Additionally, results from Q5. show a fair discrepancy is average scores in those that can run sub 50 seconds in the 400m event. This may show a high level of training, more robustness or overall generally higher level of fitness.

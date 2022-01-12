@@ -1,0 +1,75 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+---
+title: "task1_cleaning_script"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(here)
+decathlon <- read_rds(here("clean_data/clean_decathlon.rds"))
+```
+
+
+Q1. Who had the longest long jump seen in the data?
+
+A.  Clay has the longest long jump at 7.92 meters.
+
+```{r}
+decathlon %>% 
+  arrange(desc(long_jump)) %>% 
+  slice_max(long_jump) %>% 
+  summarise(name, long_jump)
+```
+
+Q2. What was the average 100m time in each competition?
+
+A.  Decastar - 11.12538 seconds.
+    OlympicG - 10.91571 seconds.
+
+```{r}
+decathlon %>% 
+  group_by(competition) %>% 
+  summarise(avg_100m_time = mean(x100m))
+```
+
+Q3. Who had the highest total points across both competitions?
+
+A.  Serble had the highest points for both competitions.
+
+```{r}
+decathlon %>% 
+  group_by(competition) %>% 
+  slice_max(points) %>% 
+  summarise(competition, name, points)
+```
+
+Q4. What was the shot-put scores for the top three competitors in each competition?
+
+A.  Decastar:	Yurkov -15.19, Sebrle -	14.83, Karpov -	14.77		
+    OlympicG:	Sebrle	16.36, Karpov -	15.93, Macey - 15.73	
+
+```{r}
+decathlon %>% 
+  group_by(competition) %>%
+  slice_max(shot_put, n = 3) %>% 
+  summarise(competition, name, shot_put)
+```
+
+Q5. What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
+
+A.  8120 was the average points for competitors who ran the 400m in less than 50 seconds,
+    7727 was the average points for competitors who ran the 400m in more than 50 seconds.
+    
+
+```{r}
+decathlon %>% 
+  filter(x400m < 50) %>%
+  summarise(avg_points_of_competitors_less_than_50s = round(mean(points)))
+decathlon %>% 
+  filter(x400m >50) %>% 
+  summarise(avg_points_of_competitors_more_than_50s = round(mean(points)))
+```
